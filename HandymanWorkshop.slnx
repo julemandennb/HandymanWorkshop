@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="HandymanWorkshop.Client/HandymanWorkshop.Client.csproj" />
   <Project Path="HandymanWorkshop/HandymanWorkshop.csproj" />
+  <Project Path="Shared/Shared.csproj" Id="ad057aa0-7503-4e7a-8066-ec961e6e8ef7" />
 </Solution>
