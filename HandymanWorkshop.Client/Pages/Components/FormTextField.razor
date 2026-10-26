@@ -1,0 +1,32 @@
+﻿@using System.Linq.Expressions
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="mb-3">
+    <label class="form-label" for="@Id">@Label</label>
+
+    <InputText type="@Type"
+               class="form-input"
+               id="@Id"
+               name="@Id"
+               Value="@Value"
+               ValueChanged="@ValueChanged"
+               ValueExpression="@ValueExpression"
+               required="@Required" />
+
+    <ValidationMessage For="@ValueExpression" />
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Type { get; set; } = "text";
+    [Parameter] public bool Required { get; set; }
+
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<string?>>? ValueExpression { get; set; }
+}

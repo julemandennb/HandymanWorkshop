@@ -1,0 +1,52 @@
+﻿@using HandymanWorkshop.Client.Pages.Components
+@page "/Department/Edit/{id}"
+@inject HttpClient Http
+@using System.Text.Json.Serialization
+
+<PageTitle>Edit Department</PageTitle>
+
+<AuthorizeView Roles="Admin,SuperUser">
+    <Authorized Context="authContext">
+
+        <div class="container mb-5">
+            <h3>Edit</h3>
+
+            <EditForm Model="@department" OnValidSubmit="@EditDepartment">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <FormTextField Id="name"
+                               Label="Name"
+                               @bind-Value="department.Name"
+                               Required="true" />
+
+                <FormTextField Id="email"
+                               Label="Email"
+                               @bind-Value="department.Email"
+                               Required="true" />
+
+                <FormTextField Id="address"
+                               Label="Address"
+                               @bind-Value="department.Address"
+                               Required="true" />
+
+                <FormTextField Id="postcode"
+                               Label="Postcode"
+                               @bind-Value="department.Postcode"
+                               Required="true" />
+
+              
+
+                <button type="submit" class="btn btn-primary">Edit</button>
+            </EditForm>
+            <br />
+            <br />
+            <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/Department")'>Cancel</button>
+            <br />
+        </div>
+
+
+    </Authorized>
+</AuthorizeView>
+
+

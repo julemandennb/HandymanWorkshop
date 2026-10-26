@@ -1,65 +1,80 @@
+using HandymanWorkshop.Data;
+using HandymanWorkshop.Help.Departments;
+using HandymanWorkshop.Model;
+using HandymanWorkshop.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HandymanWorkshop.Model;
-using HandymanWorkshop.Data;
+using Shared.DTO.Departments;
 
 [Route("api/[controller]")]
 [ApiController]
+
 public class DepartmentsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    public DepartmentsController(ApplicationDbContext context)
+    private readonly IDepartmentService _departmentService;
+
+    public DepartmentsController(IDepartmentService departmentService)
     {
-        _context = context;
+        _departmentService = departmentService;
     }
 
     // GET: api/Department
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Department>>> GetDepartment()
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<DepartmentDto>>> GetDepartment()
     {
-        return await _context.Departments.ToListAsync();
+
+        var departments = await _departmentService.GetAllAsync();
+        return Ok(departments);
     }
 
     // GET: api/Department/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Department>> GetDepartment(int id)
+    [HttpGet("{uuid:guid}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<DepartmentDto>> GetDepartment(Guid uuid)
     {
-        var department = await _context.Departments.FindAsync(id);
+        bool canViewAllDetails =
+            User.IsInRole("Admin") ||
+            User.IsInRole("SuperUser");
+
+        DepartmentDto? department;
+
+        if (canViewAllDetails)
+        {
+            department = await _departmentService.GetDetailedByUuidAsync(uuid);
+        }
+        else
+        {
+            department = await _departmentService.GetByUuidAsync(uuid);
+        }
 
         if (department == null)
         {
             return NotFound();
         }
 
-        return department;
+        return Ok(department);
     }
 
     // PUT: api/Department/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutDepartment(int? id, Department department)
+    [HttpPut("{uuid:guid}")]
+    [Authorize(Roles = "Admin,SuperUser")]
+    public async Task<IActionResult> PutDepartment(
+        Guid uuid,
+        DepartmentDto departmentDto)
     {
-        if (id != department.Id)
+        if (uuid != departmentDto.Uuid)
         {
-            return BadRequest();
+            return BadRequest("UUID in the URL does not match the DTO.");
         }
 
-        _context.Entry(department).State = EntityState.Modified;
+        var updated = await _departmentService.UpdateAsync(uuid, departmentDto);
 
-        try
+        if (!updated)
         {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!DepartmentExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return NotFound();
         }
 
         return NoContent();
@@ -68,32 +83,31 @@ public class DepartmentsController : ControllerBase
     // POST: api/Department
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Department>> PostDepartment(Department department)
+    [Authorize(Roles = "Admin,SuperUser")]
+    public async Task<ActionResult<DepartmentDto>> PostDepartment(
+        DepartmentDto departmentDto)
     {
-        _context.Departments.Add(department);
-        await _context.SaveChangesAsync();
+        var result = await _departmentService.CreateAsync(departmentDto);
 
-        return CreatedAtAction("GetDepartment", new { id = department.Id }, department);
+        return CreatedAtAction(
+            nameof(GetDepartment),
+            new { uuid = result.Uuid },
+            result);
     }
 
     // DELETE: api/Department/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDepartment(int? id)
+    [HttpDelete("{uuid:guid}")]
+    [Authorize(Roles = "Admin,SuperUser")]
+    public async Task<IActionResult> DeleteDepartment(Guid uuid)
     {
-        var department = await _context.Departments.FindAsync(id);
-        if (department == null)
+        var deleted = await _departmentService.DeleteAsync(uuid);
+
+        if (!deleted)
         {
             return NotFound();
         }
 
-        _context.Departments.Remove(department);
-        await _context.SaveChangesAsync();
-
         return NoContent();
     }
 
-    private bool DepartmentExists(int? id)
-    {
-        return _context.Departments.Any(e => e.Id == id);
-    }
 }

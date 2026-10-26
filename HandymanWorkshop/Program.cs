@@ -2,6 +2,8 @@ using HandymanWorkshop.Client.Pages;
 using HandymanWorkshop.Components;
 using HandymanWorkshop.Components.Account;
 using HandymanWorkshop.Data;
+using HandymanWorkshop.Services;
+using HandymanWorkshop.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -62,7 +64,7 @@ namespace HandymanWorkshop
                 return new HttpClient { BaseAddress = new Uri(NavMan.BaseUri) };
             });
 
-         
+            AddServices(builder);
 
             var app = builder.Build();
 
@@ -104,6 +106,11 @@ namespace HandymanWorkshop
             await SeedAdminAsync(app, adminEmail, adminPassword);
 
             await app.RunAsync();
+        }
+
+        private static void AddServices(WebApplicationBuilder builder)
+        {
+            builder.Services.AddScoped<IDepartmentService,DepartmentService>();
         }
 
         private static async Task SeedRolesAsync(WebApplication app)

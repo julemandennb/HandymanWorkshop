@@ -1,0 +1,55 @@
+﻿@using Shared.DTO.Departments
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Postcode</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Departments != null)
+        {
+            @foreach (var item in Departments)
+            {
+                <tr>
+                    <td>@item.Uuid</td>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.Address</td>
+                    <td>@item.Postcode</td>
+                    <td>
+                        <a href="/Department/Details/@item.Uuid"
+                           class="btn btn-info btn-sm">
+                            Details
+                        </a>
+
+                        <AuthorizeView Roles="Admin,SuperUser">
+                            <Authorized Context="authContext">
+                                <a href="/Department/Edit/@item.Uuid"
+                                   class="btn btn-info btn-sm">
+                                    Edit
+                                </a>
+
+                                <a href="/Department/Delete/@item.Uuid"
+                                   class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+                            </Authorized>
+                        </AuthorizeView>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public IEnumerable<DepartmentDto>? Departments { get; set; }
+}

@@ -1,0 +1,101 @@
+﻿@page "/Department/Details/{id}"
+@inject HttpClient Http
+@using System.Text.Json.Serialization
+@using HandymanWorkshop.Client.Pages.Components
+
+
+<PageTitle>Details Department</PageTitle>
+
+<div class="container mb-5">
+    <h3>Details</h3>
+
+    
+    <button type="button" class="btn btn-secondary mb-5" @onclick='() => NavMan.NavigateTo("/Department")'>All Department</button>
+
+    @if (department == null)
+    {
+        <p>Cannot find department</p>
+    }
+    else
+    {
+        <div class="mb-3">
+            <p><strong>Id: </strong> @department.Uuid </p>
+            <p><strong>Name: </strong> @department.Name </p>
+            <p><strong>Email: </strong> @department.Email </p>
+            <p><strong>Address: </strong> @department.Address </p>
+            <p><strong>Postcode: </strong> @department.Postcode </p>
+        </div>
+
+        <AuthorizeView Roles="Admin,SuperUser">
+            <Authorized>
+                <div class="mb-3">
+
+                    @if (department.Employees == null || department.Employees.Count == 0)
+                    {
+                        <p>cannot find employees to this department</p>
+                    }
+                    else
+                    {
+
+                       <p><strong>Employees</strong> </p>
+
+                        <EmployeeTable Employees="@department.Employees" />
+                    }
+                </div>
+
+                <div class="mb-3">
+
+                    @if (department.WorkOrders == null || department.WorkOrders.Count == 0)
+                    {
+                        <p>cannot find work orders to this department</p>
+                    }
+                    else
+                    {
+
+                        <p><strong>Work orders</strong> </p>
+
+                        <WorkOrderTable WorkOrders="@department.WorkOrders" />
+                    }
+                </div>
+
+                <div class="mb-3">
+
+                    @if (department.DepartmentProducts == null || department.DepartmentProducts.Count == 0)
+                    {
+                        <p>cannot find products to this department</p>
+                    }
+                    else
+                    {
+
+                        <p><strong>products</strong> </p>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in department.DepartmentProducts)
+                                {
+
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.Total</td>
+                                    </tr>
+
+                                }
+
+                            </tbody>
+
+                        </table>
+                    }
+                </div>
+
+            </Authorized>
+        </AuthorizeView>
+    }
+
+</div>

@@ -1,0 +1,54 @@
+﻿@using Shared.DTO.Employee
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>MonthlySalary</th>
+            <th>HourlyRate</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Employees != null)
+        {
+            @foreach (var item in Employees)
+            {
+                <tr>
+                    <td>@item.Uuid</td>
+                    <td>@item.Name</td>
+                    <td>@item.Email</td>
+                    <td>@item.MonthlySalary</td>
+                    <td>@item.HourlyRate</td>
+                    <td>
+                        <a href="/Employee/Details/@item.Uuid"
+                           class="btn btn-info btn-sm">
+                            Details
+                        </a>
+                        <AuthorizeView Roles="Admin,SuperUser">
+                            <Authorized Context="authContext">
+                                <a href="/Employee/Edit/@item.Uuid"
+                                   class="btn btn-info btn-sm">
+                                    Edit
+                                </a>
+
+                                <a href="/Employee/Delete/@item.Uuid"
+                                   class="btn btn-danger btn-sm">
+                                    Delete
+                                </a>
+                            </Authorized>
+                        </AuthorizeView>
+                     </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public IEnumerable<EmployeeDto>? Employees { get; set; }
+}

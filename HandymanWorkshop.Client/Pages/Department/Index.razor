@@ -1,0 +1,30 @@
+﻿@page "/Department"
+@using HandymanWorkshop.Client.Pages.Components 
+@using System.Text.Json.Serialization
+@inject HttpClient Http
+
+
+<PageTitle>Departments</PageTitle>
+
+<div class="container mb-5">
+
+    <h3>Departments</h3>
+    <AuthorizeView Roles="Admin,SuperUser">
+         <Authorized>
+            <a href="/Department/Create" class="btn btn-primary">Create Department</a>
+        </Authorized>
+    </AuthorizeView>
+
+    @if (departments == null || departments.Count == 0)
+    {
+        <p><em>cannot find departments</em></p>
+    }
+    else
+    {
+
+        <DepartmentTable Departments="@departments" />
+
+    }
+
+</div>
+
