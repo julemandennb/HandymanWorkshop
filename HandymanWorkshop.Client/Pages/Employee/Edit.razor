@@ -1,0 +1,66 @@
+﻿@using HandymanWorkshop.Client.Pages.Components
+@page "/Employee/Edit/{id}"
+@inject HttpClient Http
+@using System.Text.Json.Serialization
+
+<PageTitle>Edit Employee</PageTitle>
+
+<AuthorizeView Roles="Admin,SuperUser,User">
+    <Authorized Context="authContext">
+
+        <div class="container mb-5">
+            <h3>Edit</h3>
+
+            <EditForm Model="@employee" OnValidSubmit="@EditDepartment">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="w-35">
+                    <FormTextField Id="name"
+                                   Label="Name"
+                                   @bind-Value="employee.Name"
+                                   Required="true" />
+
+                    <FormTextField Id="email"
+                                   Label="Email"
+                                   @bind-Value="employee.Email"
+                                   Required="true" />
+
+                    <AuthorizeView Roles="Admin,SuperUser">
+                        <Authorized Context="adminContext">
+                            <FormDecimalField Id="monthlySalary"
+                                                Label="Monthly Salary"
+                                                @bind-Value="employee.MonthlySalary"
+                                                Required="true" />
+
+                            <FormDecimalField Id="hourlyRate"
+                                                Label="Hourly Rate"
+                                                @bind-Value="employee.HourlyRate"
+                                                Required="true" />
+
+                            @if (employee.Department != null)
+                            {
+                                <FormSelectField Id="department"
+                                             Label="Department"
+                                             @bind-Value="employee.Department.Uuid"
+                                             Required="true"
+                                             Options="@DepartmentOptions" />
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+              
+
+                <button type="submit" class="btn btn-primary">Edit</button>
+            </EditForm>
+            <br />
+            <br />
+            <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/Employee")'>Cancel</button>
+            <br />
+        </div>
+
+
+    </Authorized>
+</AuthorizeView>
+
+

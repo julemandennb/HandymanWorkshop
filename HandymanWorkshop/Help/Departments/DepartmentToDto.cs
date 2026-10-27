@@ -1,11 +1,11 @@
 ﻿
+using HandymanWorkshop.Help.DepartmentProducts;
 using HandymanWorkshop.Help.Employees;
 using HandymanWorkshop.Help.WorkOrders;
-using HandymanWorkshop.Help.DepartmentProducts;
 using HandymanWorkshop.Model;
+using Shared.DTO;
 using Shared.DTO.Departments;
-using Shared.DTO.Pivot;
-using Shared.DTO.WorkOrder;
+
 
 namespace HandymanWorkshop.Help.Departments
 {
@@ -71,6 +71,15 @@ namespace HandymanWorkshop.Help.Departments
                     .Select(DepartmentProductToDto.ToDto)
                     .ToList()
                 : null
+            };
+        }
+
+        internal static SelectOptionDto ToSelectOptionDto(Department department)
+        {
+            return new SelectOptionDto
+            {
+                Text = department.Name ?? "",
+                Value = department.Uuid.ToString()
             };
         }
     }

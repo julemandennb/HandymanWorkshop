@@ -3,11 +3,12 @@ using HandymanWorkshop.Help.Departments;
 using HandymanWorkshop.Model;
 using HandymanWorkshop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Shared.DTO;
 using Shared.DTO.Departments;
 
 namespace HandymanWorkshop.Services
 {
-    public class DepartmentService : IDepartmentService
+    public class DepartmentService : IDepartmentService 
     {
         private readonly ApplicationDbContext _context;
 
@@ -110,6 +111,17 @@ namespace HandymanWorkshop.Services
             return department == null
                 ? null
                 : department;
+        }
+
+        public async Task<List<SelectOptionDto>> GetSelectOption()
+        {
+            var departments = await _context.Departments
+                .AsNoTracking()
+                .ToListAsync();
+
+            return departments
+                .Select(DepartmentToDto.ToSelectOptionDto)
+                .ToList();
         }
     }
 }

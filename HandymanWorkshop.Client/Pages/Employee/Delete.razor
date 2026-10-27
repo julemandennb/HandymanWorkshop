@@ -1,0 +1,56 @@
+﻿@page "/Employee/Delete/{id}"
+@inject HttpClient Http
+@using System.Text.Json.Serialization
+@using HandymanWorkshop.Client.Pages.Components
+
+
+<PageTitle>Delete Employee</PageTitle>
+
+<div class="container mb-5">
+    <h3>Delete</h3>
+
+    
+    <button type="button" class="btn btn-secondary mb-5" @onclick='() => NavMan.NavigateTo("/Employee")'>All Employee</button>
+
+    @if (employee == null)
+    {
+        <p>Cannot find department</p>
+    }
+    else
+    {
+        <div class="mb-3">
+            <p><strong>Id: </strong> @employee.Uuid </p>
+            <p><strong>Name: </strong> @employee.Name </p>
+            <p><strong>Email: </strong> @employee.Email </p>
+            <p><strong>Monthly Salary: </strong> @employee.MonthlySalary </p>
+            <p><strong>Hourly Rate: </strong> @employee.HourlyRate </p>
+            <p><strong>Department: </strong> @employee.Department?.Name </p>
+
+        </div>
+
+        <AuthorizeView Roles="Admin,SuperUser,User">
+            <Authorized>
+                <div class="mb-3">
+
+                    @if (employee.WorkOrders == null || employee.WorkOrders.Count == 0)
+                    {
+                        <p>cannot find WorkOrders to this employee</p>
+                    }
+                    else
+                    {
+
+                        <p><strong>Work orders</strong> </p>
+
+                        <WorkOrderTable WorkOrders="@employee.WorkOrders" />
+                    }
+                </div>
+
+                <br />
+                <br />
+                <button type="button" class="btn btn-danger" @onclick='DeleteEmployee'>Delete</button>
+
+            </Authorized>
+        </AuthorizeView>
+    }
+
+</div>

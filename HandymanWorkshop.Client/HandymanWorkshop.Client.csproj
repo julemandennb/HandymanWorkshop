@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Employees\" />
+    <Folder Include="Pages\Employee\" />
   </ItemGroup>
 
 </Project>

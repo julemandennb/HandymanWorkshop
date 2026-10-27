@@ -1,0 +1,49 @@
+﻿@using System.Linq.Expressions
+@using Microsoft.AspNetCore.Components.Forms
+@using Shared.DTO
+
+<div class="@DivClass">
+    <label class="form-label" for="@Id">@Label</label>
+
+    <div>
+        <InputSelect TValue="Guid"
+                     class="form-select"
+                     id="@Id"
+                     Value="@Value"
+                     ValueChanged="@ValueChanged"
+                     ValueExpression="@ValueExpression"
+                     required="@Required">
+            <option value="" hidden="" selected>--Select--</option>
+            @foreach (var option in Options)
+            {
+                <option value="@option.Value">@option.Text</option>
+            }
+        </InputSelect>
+
+        <ValidationMessage For="@ValueExpression" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string DivClass { get; set; } =
+        "mb-3 d-flex flex-row justify-content-between align-items-start";
+
+    [Parameter] public string Id { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public bool Required { get; set; }
+
+    [Parameter]
+    public Guid Value { get; set; }
+
+
+    [Parameter]
+    public EventCallback<Guid> ValueChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<Guid>>? ValueExpression { get; set; }
+
+    [Parameter]
+    public IEnumerable<SelectOptionDto> Options { get; set; } =
+        Enumerable.Empty<SelectOptionDto>();
+}

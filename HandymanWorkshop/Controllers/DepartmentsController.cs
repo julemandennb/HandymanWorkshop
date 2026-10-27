@@ -5,6 +5,7 @@ using HandymanWorkshop.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shared.DTO;
 using Shared.DTO.Departments;
 
 [Route("api/[controller]")]
@@ -109,5 +110,14 @@ public class DepartmentsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("getselectoption")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetSelectOption()
+    {
+        var departments = await _departmentService.GetSelectOption();
+        return Ok(departments);
+    }
+
 
 }

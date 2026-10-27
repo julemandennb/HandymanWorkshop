@@ -1,6 +1,7 @@
 ﻿using HandymanWorkshop.Help.Departments;
 using HandymanWorkshop.Help.WorkOrders;
 using HandymanWorkshop.Model;
+using Shared.DTO;
 using Shared.DTO.Employee;
 
 namespace HandymanWorkshop.Help.Employees
@@ -53,6 +54,15 @@ namespace HandymanWorkshop.Help.Employees
                         .Select(WorkOrderToDto.ToDto)
                         .ToList()
                     : null
+            };
+        }
+
+        internal static SelectOptionDto ToSelectOptionDto(Employee employee)
+        {
+            return new SelectOptionDto
+            {
+                Text = employee.Name ?? "",
+                Value = employee.Uuid.ToString()
             };
         }
     }

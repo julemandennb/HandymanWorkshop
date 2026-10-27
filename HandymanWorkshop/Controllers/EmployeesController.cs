@@ -30,7 +30,8 @@ public class EmployeesController : ControllerBase
     {
         bool canViewAllDetails =
             User.IsInRole("Admin") ||
-            User.IsInRole("SuperUser");
+            User.IsInRole("SuperUser") ||
+            User.IsInRole("User");
 
         EmployeeDto? employee;
 

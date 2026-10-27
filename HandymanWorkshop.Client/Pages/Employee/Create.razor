@@ -1,0 +1,64 @@
+﻿@using HandymanWorkshop.Client.Pages.Components
+@page "/Employee/Create"
+@inject HttpClient Http
+
+<PageTitle>Create Employee</PageTitle>
+
+<AuthorizeView Roles="Admin,SuperUser">
+    <Authorized Context="authContext">
+
+        <div class="container mb-5">
+            <h3>Create</h3>
+
+            <EditForm Model="@employee" OnValidSubmit="@AddEmployee">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                
+
+                <div class="w-35">
+
+                      <FormTextField Id="name"
+                                   Label="Name"
+                                   @bind-Value="employee.Name"
+                                   Required="true" />
+
+                    <FormTextField Id="email"
+                                   Label="Email"
+                                   @bind-Value="employee.Email"
+                                   Required="true" />
+                                   
+                    <FormDecimalField Id="monthlySalary"
+                                      Label="Monthly Salary"
+                                      @bind-Value="employee.MonthlySalary"
+                                      Required="true" />
+
+                                                     
+                     <FormDecimalField Id="hourlyRate"
+                                      Label="Hourly Rate"
+                                      @bind-Value="employee.HourlyRate"
+                                      Required="true" /> 
+
+                     <FormSelectField Id="department"
+                                     Label="Department"
+                                     @bind-Value="employee.Department.Uuid"
+                                     Required="true"
+                                     Options="@DepartmentOptions" />
+
+
+                </div>
+              
+
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+            <br />
+            <br />
+            <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/Employee")'>Cancel</button>
+            <br />
+        </div>
+
+
+    </Authorized>
+</AuthorizeView>
+
+

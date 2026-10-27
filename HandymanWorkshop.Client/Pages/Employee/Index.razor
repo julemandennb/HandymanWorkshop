@@ -1,0 +1,30 @@
+﻿@page "/Employee"
+@using HandymanWorkshop.Client.Pages.Components 
+@using System.Text.Json.Serialization
+@inject HttpClient Http
+
+
+<PageTitle>Employees</PageTitle>
+
+<div class="container mb-5">
+
+    <h3>Employees</h3>
+    <AuthorizeView Roles="Admin,SuperUser">
+         <Authorized>
+            <a href="/Employee/Create" class="btn btn-primary">Create Employee</a>
+        </Authorized>
+    </AuthorizeView>
+
+    @if (employees == null || employees.Count == 0)
+    {
+        <p><em>cannot find employees</em></p>
+    }
+    else
+    {
+
+        <EmployeeTable Employees="@employees" />
+
+    }
+
+</div>
+

@@ -4,6 +4,7 @@ using HandymanWorkshop.Help.Employees;
 using HandymanWorkshop.Model;
 using HandymanWorkshop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Shared.DTO;
 using Shared.DTO.Employee;
 
 namespace HandymanWorkshop.Services
@@ -24,23 +25,21 @@ namespace HandymanWorkshop.Services
 
         public async Task<EmployeeDto> CreateAsync(EmployeeDto dto)
         {
-            Department? department = null;
 
-            if (dto.Department != null)
+            Department? department = await _departmentService
+                   .GetModelByUuidAsync(dto.Department.Uuid);
+
+            if (department == null)
             {
-                department = await _departmentService
-                    .GetModelByUuidAsync(dto.Department.Uuid);
-
-                if (department == null)
-                {
-                    throw new KeyNotFoundException("Department not found.");
-                }
+                throw new KeyNotFoundException("Department not found.");
             }
 
+            ApplicationUser? user = await _applicationUserService.GetAsync(dto.Email);
 
-            var user = await _applicationUserService.CreateAsync(
-            dto.Email,
-            "User");
+            if(user == null)
+                user = await _applicationUserService.CreateAsync(
+                dto.Email,
+                "User");
 
             var employee = new Employee
             {
@@ -48,8 +47,8 @@ namespace HandymanWorkshop.Services
                 Email = dto.Email,
                 MonthlySalary = dto.MonthlySalary,
                 HourlyRate = dto.HourlyRate,
-                Department = department,
-                ApplicationUser = user
+                DepartmentId = department.Id,
+                ApplicationUserId = user.Id
             };
 
             _context.Employees.Add(employee);
@@ -149,6 +148,17 @@ namespace HandymanWorkshop.Services
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<List<SelectOptionDto>> GetSelectOption()
+        {
+            var employees = await _context.Employees
+                .AsNoTracking()
+                .ToListAsync();
+
+            return employees
+                .Select(EmployeeToDto.ToSelectOptionDto)
+                .ToList();
         }
     }
 }

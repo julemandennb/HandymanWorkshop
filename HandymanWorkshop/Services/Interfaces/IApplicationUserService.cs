@@ -13,5 +13,8 @@ namespace HandymanWorkshop.Services.Interfaces
        string email,
        string password,
        string role);
+
+        Task<ApplicationUser?> GetAsync(
+          string email);
     }
 }

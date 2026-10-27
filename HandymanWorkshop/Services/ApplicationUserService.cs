@@ -77,11 +77,18 @@ namespace HandymanWorkshop.Services
             return user;
         }
 
+        public async Task<ApplicationUser?> GetAsync(string email)
+        {
+            var User = await _userManager.FindByEmailAsync(email);
+            return User;
+        }
 
         private static string GenerateTemporaryPassword()
         {
             return "Aa1!" + Convert.ToBase64String(
                 RandomNumberGenerator.GetBytes(18));
         }
+
+       
     }
 }

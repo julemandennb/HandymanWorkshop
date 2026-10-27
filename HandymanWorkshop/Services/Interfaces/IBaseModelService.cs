@@ -1,4 +1,4 @@
-﻿using Shared.DTO.Departments;
+﻿using Shared.DTO;
 
 namespace HandymanWorkshop.Services.Interfaces
 {
@@ -17,5 +17,7 @@ namespace HandymanWorkshop.Services.Interfaces
         Task<bool> DeleteAsync(Guid uuid);
 
         Task<T?> GetModelByUuidAsync(Guid uuid);
+
+        Task<List<SelectOptionDto>> GetSelectOption();
     }
 }

@@ -13,7 +13,7 @@ namespace Shared.DTO.Employee
 
         public decimal HourlyRate { get; set; } = 0;
 
-        public DepartmentDto? Department { get; set; }
+        public DepartmentDto? Department { get; set; } = new DepartmentDto();
 
         public ICollection<WorkOrderDto>? WorkOrders { get; set; }
 
