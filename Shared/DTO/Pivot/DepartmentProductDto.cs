@@ -10,5 +10,7 @@
         public string ProductName { get; set; } = string.Empty;
 
         public int Total { get; set; }
+
+        public bool Selected { get; set; } = false;
     }
 }

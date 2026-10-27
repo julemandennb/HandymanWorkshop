@@ -1,0 +1,91 @@
+﻿@page "/Product/Details/{id:guid}"
+@using Shared.DTO.Product
+@inject HttpClient Http
+@inject NavigationManager NavMan
+
+<PageTitle>Product Details</PageTitle>
+
+<div class="container mb-5">
+    <h3>Product Details</h3>
+
+    <button class="btn btn-secondary mb-3"
+            @onclick='() => NavMan.NavigateTo("/Product")'>
+        All Products
+    </button>
+
+    @if (product == null)
+    {
+        <p>Loading product or product not found.</p>
+    }
+    else
+    {
+        <div class="mb-3">
+            <p><strong>UUID:</strong> @product.Uuid</p>
+            <p><strong>Name:</strong> @product.Name</p>
+            <p><strong>Description:</strong> @product.Description</p>
+            <p><strong>Price:</strong> @product.Price.ToString("C")</p>
+        </div>
+
+        <AuthorizeView Roles="Admin,SuperUser,User">
+            <Authorized>
+                <h5>Department stock</h5>
+
+                @if (product.DepartmentProducts == null ||
+                     product.DepartmentProducts.Count == 0)
+                {
+                    <p>No department assignments found.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in product.DepartmentProducts)
+                            {
+                                <tr>
+                                    <td>@item.DepartmentName</td>
+                                    <td>@item.Total</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                <h5>Work order usage</h5>
+
+                @if (product.WorkOrderProducts == null ||
+                     product.WorkOrderProducts.Count == 0)
+                {
+                    <p>No work order usage found.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Quantity</th>
+                                <th>Unit price</th>
+                                <th>Added by</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in product.WorkOrderProducts)
+                            {
+                                <tr>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.UnitPrice.ToString("C")</td>
+                                    <td>@item.AddedByUser</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </Authorized>
+        </AuthorizeView>
+    }
+</div>

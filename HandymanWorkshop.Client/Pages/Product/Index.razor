@@ -1,0 +1,19 @@
+﻿@page "/Product"
+@using Shared.DTO.Product
+@using HandymanWorkshop.Client.Pages.Components
+
+<PageTitle>Products</PageTitle>
+
+<div class="container">
+    <h3>Products</h3>
+
+    <AuthorizeView Roles="Admin,SuperUser">
+        <Authorized Context="authContext">
+            <a href="/Product/Create" class="btn btn-primary mb-3">
+                Create Product
+            </a>
+        </Authorized>
+    </AuthorizeView>
+
+    <ProductTable Products="@products" />
+</div>

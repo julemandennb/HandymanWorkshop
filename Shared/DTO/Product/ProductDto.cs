@@ -10,8 +10,8 @@ namespace Shared.DTO.Product
 
         public decimal Price { get; set; }
 
-        public ICollection<DepartmentProductDto>? DepartmentProducts { get; set; }
+        public ICollection<DepartmentProductDto>? DepartmentProducts { get; set; } = new List<DepartmentProductDto>();
 
-        public ICollection<WorkOrderProductDto>? WorkOrderProducts { get; set; }
+        public ICollection<WorkOrderProductDto>? WorkOrderProducts { get; set; } = new List<WorkOrderProductDto>();
     }
 }

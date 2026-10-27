@@ -1,0 +1,49 @@
+﻿@page "/Product/Delete/{id:guid}"
+@using Shared.DTO.Product
+@inject HttpClient Http
+@inject NavigationManager NavMan
+
+<PageTitle>Delete Product</PageTitle>
+
+<div class="container mb-5">
+    <h3>Delete Product</h3>
+
+    <button class="btn btn-secondary mb-3"
+            @onclick='() => NavMan.NavigateTo("/Product")'>
+        All Products
+    </button>
+
+    @if (product == null)
+    {
+        <p>Loading product or product not found.</p>
+    }
+    else
+    {
+        <div class="mb-3">
+            <p><strong>UUID:</strong> @product.Uuid</p>
+            <p><strong>Name:</strong> @product.Name</p>
+            <p><strong>Description:</strong> @product.Description</p>
+            <p><strong>Price:</strong> @product.Price.ToString("C")</p>
+        </div>
+
+        <AuthorizeView Roles="Admin,SuperUser">
+            <Authorized>
+                <p class="text-danger">
+                    Are you sure you want to delete this product?
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <p class="text-danger">@errorMessage</p>
+                }
+
+                <button class="btn btn-danger"
+                        disabled="@deleting"
+                        @onclick="DeleteProduct">
+                    @(deleting ? "Deleting..." : "Delete")
+                </button>
+            </Authorized>
+        </AuthorizeView>
+    }
+</div>
+

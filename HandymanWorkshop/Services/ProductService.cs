@@ -34,6 +34,13 @@ namespace HandymanWorkshop.Services
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
+            if (dto.DepartmentProducts != null)
+            {
+                await _departmentProductService.SyncProductDepartmentsAsync(
+                    product.Uuid,
+                    dto.DepartmentProducts);
+            }
+
             return ProductToDto.ToDto(product);
         }
 
@@ -77,8 +84,8 @@ namespace HandymanWorkshop.Services
         {
             var product = await _context.Products
                 .AsNoTracking()
-                .Include(d => d.DepartmentProducts)
-                .Include(d => d.WorkOrderProducts)
+                .Include(d => d.DepartmentProducts).ThenInclude(de => de.Department)
+                .Include(d => d.WorkOrderProducts).ThenInclude(de => de.WorkOrder)
                 .FirstOrDefaultAsync(d => d.Uuid == uuid);
 
             return product == null

@@ -14,6 +14,7 @@ namespace HandymanWorkshop.Help.DepartmentProducts
             {
                 Uuid = departmentProduct.Uuid,
                 DepartmentUuid = departmentProduct.Department.Uuid,
+                DepartmentName = departmentProduct.Department.Name ?? "",
                 ProductUuid = departmentProduct.Product.Uuid,
                 ProductName = departmentProduct.Product.Name,
                 Total = departmentProduct.Total

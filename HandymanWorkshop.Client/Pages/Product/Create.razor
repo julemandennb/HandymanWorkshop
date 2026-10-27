@@ -1,0 +1,116 @@
+﻿
+@page "/Product/Create"
+
+@using HandymanWorkshop.Client.Pages.Components
+@using Shared.DTO.Product
+@using Shared.DTO.Departments
+@using Shared.DTO.Pivot
+@using System.Net.Http.Json
+
+@inject HttpClient Http
+@inject NavigationManager NavMan
+
+<PageTitle>Create Product</PageTitle>
+
+<AuthorizeView Roles="Admin,SuperUser">
+    <Authorized Context="authContext">
+        <div class="container mb-5">
+            <h3>Create Product</h3>
+
+            <EditForm Model="@product" OnValidSubmit="@CreateProduct">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="w-35">
+                    <FormTextField Id="name"
+                                   Label="Name"
+                                   @bind-Value="product.Name"
+                                   Required="true" />
+
+                    <FormTextField Id="description"
+                                   Label="Description"
+                                   @bind-Value="product.Description" />
+
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+
+                        <InputNumber id="price"
+                                     class="form-control"
+                                     @bind-Value="product.Price" />
+
+                        <ValidationMessage For="@(() => product.Price)" />
+                    </div>
+                </div>
+
+                <h5 class="mt-4">Departments and stock</h5>
+
+                @if (!string.IsNullOrWhiteSpace(loadError))
+                {
+                    <div class="alert alert-danger">@loadError</div>
+                }
+                else if (departmentStocks.Count == 0)
+                {
+                    <p>No departments found.</p>
+                }
+                else
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Department</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in departmentStocks)
+                            {
+                                <tr @key="item.DepartmentUuid">
+                                    <td>
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               @bind="item.Selected" />
+                                    </td>
+
+                                    <td>@item.DepartmentName</td>
+
+                                    <td>
+                                        @if (item.Selected)
+                                        {
+                                            <InputNumber TValue="int"
+                                                         class="form-control"
+                                                         @bind-Value="item.Total" />
+
+                                            <ValidationMessage For="@(() => item.Total)" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @errorMessage
+                    </div>
+                }
+
+                <button type="submit"
+                        class="btn btn-primary"
+                        disabled="@isSaving">
+                    @(isSaving ? "Creating..." : "Create")
+                </button>
+
+                <button type="button"
+                        class="btn btn-secondary ms-2"
+                        disabled="@isSaving"
+                        @onclick='() => NavMan.NavigateTo("/Product")'>
+                    Cancel
+                </button>
+            </EditForm>
+        </div>
+    </Authorized>
+</AuthorizeView>
