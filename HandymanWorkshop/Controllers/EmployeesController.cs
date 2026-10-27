@@ -1,9 +1,6 @@
-using HandymanWorkshop.Data;
-using HandymanWorkshop.Model;
-using HandymanWorkshop.Services;
 using HandymanWorkshop.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Shared.DTO.Employee;
 
 [Route("api/[controller]")]
@@ -19,6 +16,7 @@ public class EmployeesController : ControllerBase
 
     // GET: api/Employee
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployee()
     {
         var employees = await _employeesService.GetAllAsync();
@@ -27,6 +25,7 @@ public class EmployeesController : ControllerBase
 
     // GET: api/Employee/5
     [HttpGet("{uuid:guid}")]
+    [AllowAnonymous]
     public async Task<ActionResult<EmployeeDto>> GetEmployee(Guid uuid)
     {
         bool canViewAllDetails =
@@ -55,12 +54,21 @@ public class EmployeesController : ControllerBase
     // PUT: api/Employee/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{uuid:guid}")]
+    [Authorize(Roles = "Admin,SuperUser,User")]
     public async Task<IActionResult> PutEmployee(Guid uuid, EmployeeDto employeeDto)
     {
         if (uuid != employeeDto.Uuid)
         {
             return BadRequest("UUID in the URL does not match the DTO.");
         }
+
+        bool canViewAllDetails =
+           User.IsInRole("Admin") ||
+           User.IsInRole("SuperUser");
+
+        if (!canViewAllDetails)
+            employeeDto.Department = null;
+
 
         var updated = await _employeesService.UpdateAsync(uuid, employeeDto);
 
@@ -75,6 +83,7 @@ public class EmployeesController : ControllerBase
     // POST: api/Employee
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "Admin,SuperUser")]
     public async Task<ActionResult<EmployeeDto>> PostEmployee(EmployeeDto employeeDto)
     {
         var result = await _employeesService.CreateAsync(employeeDto);
@@ -87,6 +96,7 @@ public class EmployeesController : ControllerBase
 
     // DELETE: api/Employee/5
     [HttpDelete("{uuid:guid}")]
+    [Authorize(Roles = "Admin,SuperUser,User")]
     public async Task<IActionResult> DeleteEmployee(Guid uuid)
     {
         var deleted = await _employeesService.DeleteAsync(uuid);
