@@ -1,4 +1,5 @@
 ﻿using HandymanWorkshop.Model;
+using Shared.DTO;
 using Shared.DTO.Pivot;
 
 namespace HandymanWorkshop.Help.DepartmentProducts
@@ -16,6 +17,15 @@ namespace HandymanWorkshop.Help.DepartmentProducts
                 ProductUuid = departmentProduct.Product.Uuid,
                 ProductName = departmentProduct.Product.Name,
                 Total = departmentProduct.Total
+            };
+        }
+
+        internal static SelectOptionDto ToSelectOptionDto(DepartmentProduct departmentProduct)
+        {
+            return new SelectOptionDto
+            {
+                Text = departmentProduct.Product.Name ?? "",
+                Value = departmentProduct.Uuid.ToString()
             };
         }
     }
