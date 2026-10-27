@@ -110,7 +110,9 @@ namespace HandymanWorkshop
 
         private static void AddServices(WebApplicationBuilder builder)
         {
+            builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
             builder.Services.AddScoped<IDepartmentService,DepartmentService>();
+            builder.Services.AddScoped<IEmployeesService, EmployeesService>();
         }
 
         private static async Task SeedRolesAsync(WebApplication app)

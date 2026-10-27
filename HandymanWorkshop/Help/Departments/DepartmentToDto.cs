@@ -17,10 +17,10 @@ namespace HandymanWorkshop.Help.Departments
             return new DepartmentDto
             {
                 Uuid = department.Uuid,
-                Name = department.Name,
-                Email = department.Email,
-                Address = department.Address,
-                Postcode = department.Postcode,
+                Name = department.Name ?? "",
+                Email = department.Email ?? "",
+                Address = department.Address ?? "",
+                Postcode = department.Postcode ?? "",
 
                 Employees = null,
                 WorkOrders = null,
@@ -48,10 +48,10 @@ namespace HandymanWorkshop.Help.Departments
             return new DepartmentDto
             {
                 Uuid = department.Uuid,
-                Name = department.Name,
-                Email = department.Email,
-                Address = department.Address,
-                Postcode = department.Postcode,
+                Name = department.Name ?? "",
+                Email = department.Email ?? "",
+                Address = department.Address ?? "",
+                Postcode = department.Postcode ?? "",
 
                 Employees = addEmployees && department.Employees != null
                     ? department.Employees

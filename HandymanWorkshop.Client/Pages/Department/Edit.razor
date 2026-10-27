@@ -15,26 +15,27 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <FormTextField Id="name"
-                               Label="Name"
-                               @bind-Value="department.Name"
-                               Required="true" />
+                <div class="w-35">
+                    <FormTextField Id="name"
+                                   Label="Name"
+                                   @bind-Value="department.Name"
+                                   Required="true" />
 
-                <FormTextField Id="email"
-                               Label="Email"
-                               @bind-Value="department.Email"
-                               Required="true" />
+                    <FormTextField Id="email"
+                                   Label="Email"
+                                   @bind-Value="department.Email"
+                                   Required="true" />
 
-                <FormTextField Id="address"
-                               Label="Address"
-                               @bind-Value="department.Address"
-                               Required="true" />
+                    <FormTextField Id="address"
+                                   Label="Address"
+                                   @bind-Value="department.Address"
+                                   Required="true" />
 
-                <FormTextField Id="postcode"
-                               Label="Postcode"
-                               @bind-Value="department.Postcode"
-                               Required="true" />
-
+                    <FormTextField Id="postcode"
+                                   Label="Postcode"
+                                   @bind-Value="department.Postcode"
+                                   Required="true" />
+                </div>
               
 
                 <button type="submit" class="btn btn-primary">Edit</button>

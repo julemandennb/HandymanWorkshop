@@ -101,6 +101,15 @@ namespace HandymanWorkshop.Services
             return true;
         }
 
+        public async Task<Department?> GetModelByUuidAsync(Guid uuid)
+        {
+            var department = await _context.Departments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.Uuid == uuid);
 
+            return department == null
+                ? null
+                : department;
+        }
     }
 }

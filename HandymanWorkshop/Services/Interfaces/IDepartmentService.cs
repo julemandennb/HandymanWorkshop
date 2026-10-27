@@ -1,19 +1,9 @@
-﻿using Shared.DTO.Departments;
+﻿using HandymanWorkshop.Model;
+using Shared.DTO.Departments;
 
 namespace HandymanWorkshop.Services.Interfaces
 {
-    public interface IDepartmentService
+    public interface IDepartmentService : IBaseModelService<DepartmentDto, Department>
     {
-        Task<List<DepartmentDto>> GetAllAsync();
-
-        Task<DepartmentDto?> GetByUuidAsync(Guid uuid);
-
-        Task<DepartmentDto?> GetDetailedByUuidAsync(Guid uuid);
-
-        Task<DepartmentDto> CreateAsync(DepartmentDto dto);
-
-        Task<bool> UpdateAsync(Guid uuid, DepartmentDto dto);
-
-        Task<bool> DeleteAsync(Guid uuid);
     }
 }
