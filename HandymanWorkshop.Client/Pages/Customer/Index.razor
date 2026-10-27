@@ -1,0 +1,30 @@
+﻿@page "/Customer"
+@using HandymanWorkshop.Client.Pages.Components 
+@using System.Text.Json.Serialization
+@inject HttpClient Http
+
+
+<PageTitle>Customers</PageTitle>
+
+<div class="container mb-5">
+
+    <h3>Customers</h3>
+    <AuthorizeView Roles="Admin,SuperUser,User">
+         <Authorized>
+            <a href="/customer/Create" class="btn btn-primary">Create customer</a>
+        </Authorized>
+    </AuthorizeView>
+
+    @if (customers == null || customers.Count == 0)
+    {
+        <p><em>cannot find customers</em></p>
+    }
+    else
+    {
+
+        <CustomerTable customers="@customers" />
+
+    }
+
+</div>
+

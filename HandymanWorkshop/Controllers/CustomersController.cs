@@ -18,11 +18,28 @@ public class CustomersController : ControllerBase
 
     // GET: api/Customer
     [HttpGet]
-    [Authorize(Roles = "Admin,SuperUser,User")]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomer()
     {
-        var customer = await _customersService.GetAllAsync();
-        return Ok(customer);
+        bool canViewAllDetails =
+           User.IsInRole("Admin") ||
+           User.IsInRole("SuperUser") ||
+           User.IsInRole("User");
+
+        if (canViewAllDetails)
+        {
+            var customer = await _customersService.GetAllAsync();
+            return Ok(customer);
+        }
+
+        string? currentUserId =
+           User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (currentUserId == null)
+            return Unauthorized();
+
+        var thisCustomer = await _customersService.ByApplicationUserId(currentUserId);
+        return Ok(thisCustomer);
     }
 
     // GET: api/Customer/5

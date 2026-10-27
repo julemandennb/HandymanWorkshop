@@ -21,6 +21,18 @@ namespace HandymanWorkshop.Services
             _applicationUserService = applicationUserService;
         }
 
+        public async Task<List<CustomerDto>> ByApplicationUserId(string ApplicationUserId)
+        {
+            var customer = await _context.Customers
+                .Where(c => c.ApplicationUserId == ApplicationUserId)
+                  .AsNoTracking()
+                  .ToListAsync();
+
+            return customer
+                .Select(CustomerToDto.ToDto)
+                .ToList();
+        }
+
         public async Task<CustomerDto> CreateAsync(CustomerDto dto)
         {
             ApplicationUser? user = await _applicationUserService.GetAsync(dto.Email);
