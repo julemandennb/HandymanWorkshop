@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shared;
 
 namespace HandymanWorkshop
 {
@@ -126,7 +127,7 @@ namespace HandymanWorkshop
             var roleManager = scope.ServiceProvider
                 .GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roles = { "Admin", "SuperUser", "User", "Customer" };
+            string[] roles = Roles.roles;
 
             foreach (var role in roles)
             {

@@ -1,0 +1,81 @@
+﻿@using HandymanWorkshop.Client.Pages.Components
+@using Shared
+@page "/Profiles/Create"
+@inject HttpClient Http
+
+
+
+<PageTitle>Create Profiles</PageTitle>
+
+<AuthorizeView Roles="Admin">
+    <Authorized Context="authContext">
+
+        <div class="container mb-5">
+            <h3>Create</h3>
+
+            <EditForm Model="@newProfiles" OnValidSubmit="@AddProfiles">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="w-35">
+
+
+                    <FormTextField Id="email"
+                                   Label="Email"
+                                   @bind-Value="newProfiles.Email"
+                                   Required="true" />
+
+                    <FormTextField Id="password"
+                                    Type="Password"
+                                   Label="Password"
+                                   @bind-Value="newProfiles.Password"
+                                   Required="true" />
+
+                    <FormTextField Id="passwordCheck"
+                                   Type="Password"
+                                   Label="PasswordCheck"
+                                   @bind-Value="newProfiles.PasswordCheck"
+                                   Required="true" />
+
+                    <div class="mb-3 d-flex flex-row justify-content-between align-items-start">
+                        <label class="form-label" for="role">Role</label>
+
+                        <div>
+                            <InputSelect TValue="string"
+                                         class="form-select"
+                                         id="role"
+                                         @bind-Value="newProfiles.Role"
+                                         required="true">
+                                <option value="" hidden="" selected>--Select--</option>
+                                @foreach (var item in Roles.roles)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+           
+                               
+                            </InputSelect>
+
+                            <ValidationMessage For="@(() => newProfiles.Role)" />
+                        </div>
+                    </div>
+
+
+
+    
+
+                </div>
+              
+
+                <button type="submit" class="btn btn-primary">Create</button>
+            </EditForm>
+            <br />
+            <br />
+            <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/Profiles")'>Cancel</button>
+            <br />
+        </div>
+
+
+    </Authorized>
+</AuthorizeView>
+
+
