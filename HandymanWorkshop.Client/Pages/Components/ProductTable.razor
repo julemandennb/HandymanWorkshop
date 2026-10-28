@@ -1,6 +1,6 @@
 ﻿@using Shared.DTO.Product
 
-<table class="table table-striped">
+<table class="table">
     <thead>
         <tr>
             <th>Name</th>
@@ -17,7 +17,7 @@
                 <tr @key="product.Uuid">
                     <td>@product.Name</td>
                     <td>@product.Description</td>
-                    <td>@product.Price.ToString("C")</td>
+                    <td>@product.Price.ToString()</td>
                     <td>
                         <a href="/Product/Details/@product.Uuid"
                            class="btn btn-info btn-sm">

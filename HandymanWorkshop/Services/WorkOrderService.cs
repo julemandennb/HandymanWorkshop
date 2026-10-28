@@ -75,7 +75,7 @@ namespace HandymanWorkshop.Services
                 Description = dto.Description,
                 ScheduledDate = dto.ScheduledDate,
                 EstimatedHours = dto.EstimatedHours,
-                HourlyRate = dto.HourlyRate,
+                HourlyRate = dto.HourlyRate == 0 ? employee.HourlyRate : dto.HourlyRate,
                 EmployeeId = employee.Id,
                 DepartmentId = department.Id,
                 CustomerId = customer.Id,

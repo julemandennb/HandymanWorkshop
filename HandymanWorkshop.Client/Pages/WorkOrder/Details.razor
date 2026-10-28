@@ -1,0 +1,39 @@
+﻿@page "/WorkOrder/Details/{id}"
+@inject HttpClient Http
+@using System.Text.Json.Serialization
+@using HandymanWorkshop.Client.Pages.Components
+
+
+<PageTitle>Details WorkOrder</PageTitle>
+
+<div class="container mb-5">
+    <h3>Details</h3>
+
+    
+    <button type="button" class="btn btn-secondary mb-5" @onclick='() => NavMan.NavigateTo("/WorkOrder")'>All WorkOrder</button>
+
+    @if (workOrder == null)
+    {
+        <p>Cannot find workOrder</p>
+    }
+    else
+    {
+        <div class="mb-3">
+            <p><strong>Id: </strong> @workOrder.Uuid </p>
+            <p><strong>Title: </strong> @workOrder.Title </p>
+            <p><strong>Description: </strong> @workOrder.Description </p>
+            <p><strong>Status: </strong> @workOrder.Status </p>
+            <p><strong>Scheduled Date: </strong> @workOrder.ScheduledDate </p>
+            <p><strong>Estimated Hours: </strong> @workOrder.EstimatedHours </p>
+            <p><strong>HourlyRate: </strong> @workOrder.HourlyRate </p>
+                 <p><strong>price: </strong> @price </p>
+
+            <p><strong>Employee: </strong> @workOrder.Employee.Name </p>
+            <p><strong>Department: </strong> @workOrder.Department.Name </p>
+            <p><strong>Customer: </strong> @workOrder.Customer.Name </p>
+
+        </div>
+
+    }
+
+</div>
