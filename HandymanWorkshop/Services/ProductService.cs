@@ -1,11 +1,13 @@
 ﻿using HandymanWorkshop.Data;
+using HandymanWorkshop.Help.Employees;
 using HandymanWorkshop.Help.Products;
 using HandymanWorkshop.Model;
 using HandymanWorkshop.Services.Interfaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Shared.DTO;
-using Shared.DTO.Product;
 using Shared.DTO.Pivot;
+using Shared.DTO.Product;
 
 namespace HandymanWorkshop.Services
 {
@@ -113,6 +115,15 @@ namespace HandymanWorkshop.Services
             return product
                 .Select(ProductToDto.ToSelectOptionDto)
                 .ToList();
+        }
+
+        public async Task<List<SelectOptionDto>> getSelectoptionByDepartment(Guid uuid)
+        {
+            IEnumerable<Product> products = await _departmentProductService.GetAllProductFromDepartmentModelAsync(uuid);
+
+            return products
+              .Select(ProductToDto.ToSelectOptionDto)
+              .ToList();
         }
 
         public async Task<bool> UpdateAsync(Guid uuid, ProductDto dto)

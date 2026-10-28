@@ -68,6 +68,7 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th>WorkOrder</th>
                                 <th>Quantity</th>
                                 <th>Unit price</th>
                                 <th>Added by</th>
@@ -77,6 +78,7 @@
                             @foreach (var item in product.WorkOrderProducts)
                             {
                                 <tr>
+                                    <td>@item.WorkOrderName</td>
                                     <td>@item.Quantity</td>
                                     <td>@item.UnitPrice.ToString("C")</td>
                                     <td>@item.AddedByUser</td>

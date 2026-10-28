@@ -19,6 +19,8 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
 
         private List<SelectOptionDto>? EmployeeOptions = new List<SelectOptionDto>();
 
+        private List<SelectOptionDto>? ProductOptions = new List<SelectOptionDto>();
+
         [Inject]
         protected NavigationManager? NavMan { get; set; }
 
@@ -33,9 +35,11 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
 
         }
 
-        protected async Task GetEmployeesFromDepartment()
+        protected async Task GetItmeFrmoDepartment()
         {
             EmployeeOptions = await Http.GetFromJsonAsync<List<SelectOptionDto>>("api/Employees/getSelectoptionByDepartment/"+ workOrder.Department.Uuid);
+            ProductOptions = await Http.GetFromJsonAsync<List<SelectOptionDto>>("api/Products/getSelectoptionByDepartment/" + workOrder.Department.Uuid);
+
 
         }
 

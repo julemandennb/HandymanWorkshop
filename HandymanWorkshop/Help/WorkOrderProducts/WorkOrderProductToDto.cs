@@ -12,6 +12,7 @@ namespace HandymanWorkshop.Help.WorkOrderProducts
             return new WorkOrderProductDto
             {
                 Uuid = WorkOrderProduct.Uuid,
+                WorkOrderName = WorkOrderProduct.WorkOrder.Title ?? "",
                 ProductName = WorkOrderProduct.Product.Name,
                 Quantity = WorkOrderProduct.Quantity,
                 UnitPrice = WorkOrderProduct.UnitPrice,

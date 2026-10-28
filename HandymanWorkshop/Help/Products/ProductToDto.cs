@@ -63,7 +63,7 @@ namespace HandymanWorkshop.Help.Products
         {
             return new SelectOptionDto
             {
-                Text = product.Name ?? "",
+                Text = product.Name + " kr" + product.Price ?? "",
                 Value = product.Uuid.ToString()
             };
         }

@@ -1,9 +1,10 @@
-﻿using Shared.DTO.Pivot;
+﻿using HandymanWorkshop.Model;
+using Shared.DTO.Pivot;
 
 
 namespace HandymanWorkshop.Services.Interfaces
 {
-    public interface IDepartmentProductService: ISelectOption
+    public interface IDepartmentProductService
     {
         Task<IEnumerable<DepartmentProductDto>> GetAllAsync();
 
@@ -16,5 +17,10 @@ namespace HandymanWorkshop.Services.Interfaces
         Task SyncProductDepartmentsAsync(
             Guid productUuid,
             ICollection<DepartmentProductDto> dtoList);
+
+        Task<IEnumerable<Product>> GetAllProductFromDepartmentModelAsync(Guid uuid);
+
+        Task<IEnumerable<Department>> GetAllDepartmentFromProductModelAsync(Guid uuid);
+
     }
 }

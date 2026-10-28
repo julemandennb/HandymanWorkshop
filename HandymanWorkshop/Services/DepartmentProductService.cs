@@ -10,9 +10,10 @@ using Shared.DTO.Pivot;
 
 namespace HandymanWorkshop.Services
 {
-    public class DepartmentProductService : IDepartmentProductService
+    public class DepartmentProductService : IDepartmentProductService 
     {
         private readonly ApplicationDbContext _context;
+
 
         public DepartmentProductService(ApplicationDbContext context)
         {
@@ -31,6 +32,28 @@ namespace HandymanWorkshop.Services
                 .ToList();
         }
 
+        public async Task<IEnumerable<Department>> GetAllDepartmentFromProductModelAsync(Guid uuid)
+        {
+            Product? product  = await _context.Products.FirstOrDefaultAsync(o => o.Uuid == uuid);
+            if (product == null)
+            {
+                return Enumerable.Empty<Department>();
+            }
+
+            return await _context.DepartmentProducts.Where(p => p.ProductId == product.Id).Select(d => d.Department ).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetAllProductFromDepartmentModelAsync(Guid uuid)
+        {
+            Department? department = await _context.Departments.FirstOrDefaultAsync(o => o.Uuid == uuid);
+            if (department == null)
+            {
+                return Enumerable.Empty<Product>();
+            }
+
+            return await _context.DepartmentProducts.Where(p => p.DepartmentId == department.Id).Select(d => d.Product).ToListAsync();
+        }
+
         // GET BY UUID
         public async Task<DepartmentProductDto?> GetByUuidAsync(Guid uuid)
         {
@@ -43,16 +66,8 @@ namespace HandymanWorkshop.Services
                 : DepartmentProductToDto.ToDto(departmentProducts);
         }
 
-        public async Task<List<SelectOptionDto>> GetSelectOption()
-        {
-            var departmentProducts = await _context.DepartmentProducts
-               .AsNoTracking()
-               .ToListAsync();
 
-            return departmentProducts
-                .Select(DepartmentProductToDto.ToSelectOptionDto)
-                .ToList();
-        }
+
 
         // ADD, UPDATE AND DELETE
         public async Task SyncAsync(

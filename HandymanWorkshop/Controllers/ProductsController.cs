@@ -116,4 +116,12 @@ public class ProductsController : ControllerBase
         var product = await _productService.GetSelectOption();
         return Ok(product);
     }
+
+    [HttpGet("getSelectoptionByDepartment/{uuid:guid}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetSelectOption(Guid uuid)
+    {
+        var products = await _productService.getSelectoptionByDepartment(uuid);
+        return Ok(products);
+    }
 }
