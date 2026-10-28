@@ -13,7 +13,9 @@ namespace HandymanWorkshop.Help.WorkOrderProducts
             {
                 Uuid = WorkOrderProduct.Uuid,
                 WorkOrderName = WorkOrderProduct.WorkOrder.Title ?? "",
-                ProductName = WorkOrderProduct.Product.Name,
+                WorkOrderUuid = WorkOrderProduct.WorkOrder.Uuid,
+                ProductName = WorkOrderProduct.Product.Name ?? "",
+                ProductUuid = WorkOrderProduct.Product.Uuid,
                 Quantity = WorkOrderProduct.Quantity,
                 UnitPrice = WorkOrderProduct.UnitPrice,
                 AddedByUser = WorkOrderProduct.AddedByUser?.UserName ?? ""

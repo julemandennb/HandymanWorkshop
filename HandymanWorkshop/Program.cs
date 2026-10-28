@@ -65,6 +65,7 @@ namespace HandymanWorkshop
                 return new HttpClient { BaseAddress = new Uri(NavMan.BaseUri) };
             });
 
+            builder.Services.AddHttpContextAccessor();
             AddServices(builder);
 
             var app = builder.Build();
@@ -118,6 +119,7 @@ namespace HandymanWorkshop
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IDepartmentProductService,DepartmentProductService>();
             builder.Services.AddScoped<IWorkOrderService, WorkOrderService>();
+            builder.Services.AddScoped<IWorkOrderProductService,WorkOrderProductService>();
         }
 
         private static async Task SeedRolesAsync(WebApplication app)

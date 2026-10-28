@@ -5,6 +5,9 @@ using HandymanWorkshop.Model;
 using HandymanWorkshop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Shared.DTO.WorkOrder;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Shared.DTO.Pivot;
 
 namespace HandymanWorkshop.Services
 {
@@ -18,17 +21,27 @@ namespace HandymanWorkshop.Services
         private readonly IEmployeesService _employeesService;
         private readonly IDepartmentService _departmentService;
 
+        private readonly IWorkOrderProductService _workOrderProductService;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+
         public WorkOrderService(ApplicationDbContext context, 
             IApplicationUserService applicationUserService,
             ICustomersService customersService,
             IEmployeesService employeesService,
-            IDepartmentService departmentService)
+            IDepartmentService departmentService,
+            IWorkOrderProductService workOrderProductService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _applicationUserService = applicationUserService;
             _customersService = customersService;
             _employeesService = employeesService;
             _departmentService = departmentService;
+            _workOrderProductService = workOrderProductService;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
 
@@ -85,6 +98,17 @@ namespace HandymanWorkshop.Services
 
             await _context.SaveChangesAsync();
 
+            if (dto.WorkOrderProducts != null &&
+                dto.WorkOrderProducts.Any())
+            {
+ 
+                await _workOrderProductService.SyncAsync(
+                    workOrder.Uuid,
+                    dto.WorkOrderProducts,
+                    GetCurrentUserId());
+            }
+
+
             return WorkOrderToDto.ToDto(workOrder);
 
         }
@@ -132,7 +156,10 @@ namespace HandymanWorkshop.Services
                 .Include(d => d.Department)
                 .Include(d => d.Employee)
                 .Include(d => d.Customer)
-                .Include(d => d.WorkOrderProducts)
+                 .Include(w => w.WorkOrderProducts)
+                    .ThenInclude(wp => wp.Product)
+                .Include(w => w.WorkOrderProducts)
+                    .ThenInclude(wp => wp.AddedByUser)
                 .FirstOrDefaultAsync(d => d.Uuid == uuid);
 
             return workOrder == null
@@ -174,7 +201,8 @@ namespace HandymanWorkshop.Services
                 return false;
             }
 
-            WorkOrder? workOrder = await GetModelByUuidAsync(uuid);
+            WorkOrder? workOrder =  await _context.WorkOrders
+               .FirstOrDefaultAsync(d => d.Uuid == uuid);
 
             if (workOrder == null)
                 return false;
@@ -185,14 +213,26 @@ namespace HandymanWorkshop.Services
             workOrder.ScheduledDate = dto.ScheduledDate;
             workOrder.EstimatedHours = dto.EstimatedHours;
             workOrder.HourlyRate = dto.HourlyRate;
-            workOrder.EmployeeId = employee.Id;
-            workOrder.DepartmentId = department.Id;
-            workOrder.CustomerId = customer.Id;
+            workOrder.Status = dto.Status;
 
             await _context.SaveChangesAsync();
 
+            await _workOrderProductService.SyncAsync(
+                workOrder.Uuid,
+                dto.WorkOrderProducts ?? new List<WorkOrderProductDto>(),
+                GetCurrentUserId());
+
             return true;
 
+        }
+
+
+        private string GetCurrentUserId()
+        {
+            return _httpContextAccessor.HttpContext?.User
+                .FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? throw new UnauthorizedAccessException(
+                    "Authenticated user ID was not found.");
         }
     }
 }

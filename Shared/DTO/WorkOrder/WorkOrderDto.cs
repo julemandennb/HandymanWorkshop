@@ -2,6 +2,7 @@
 using Shared.DTO.Departments;
 using Shared.DTO.Employee;
 using Shared.DTO.Pivot;
+using Shared.Enum;
 
 namespace Shared.DTO.WorkOrder
 {
@@ -15,7 +16,7 @@ namespace Shared.DTO.WorkOrder
 
         public string Description { get; set; } = string.Empty;
 
-        public string Status { get; set; } = string.Empty;
+        public WorkOrderStatus Status { get; set; } = WorkOrderStatus.Pending;
 
         public DateTime? ScheduledDate { get; set; }
 

@@ -1,5 +1,6 @@
-﻿@using HandymanWorkshop.Client.Pages.Components
-@page "/WorkOrder/Create"
+﻿@page "/WorkOrder/Create"
+@using HandymanWorkshop.Client.Pages.Components
+@using Shared.DTO.Pivot
 @inject HttpClient Http
 
 <PageTitle>Create WorkOrder</PageTitle>
@@ -8,13 +9,11 @@
     <Authorized Context="authContext">
 
         <div class="container mb-5">
-            <h3>Create</h3>
+            <h3>Create Work Order</h3>
 
             <EditForm Model="@workOrder" OnValidSubmit="@AddWorkOrder">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
-
-                
 
                 <div class="w-35">
 
@@ -29,32 +28,30 @@
                                    Required="true" />
 
                     <div class="mb-3 d-flex flex-row justify-content-between align-items-start">
-                        <label class="form-label " for="scheduledDate">Scheduled Date</label>
+                        <label class="form-label" for="scheduledDate">
+                            Scheduled Date
+                        </label>
 
                         <div>
-                                <InputDate
-                                        class="form-input"
+                            <InputDate class="form-input"
                                        id="scheduledDate"
                                        name="scheduledDate"
-                                       @bind-Value="workOrder.ScheduledDate"
-                                       />
+                                       @bind-Value="workOrder.ScheduledDate" />
                         </div>
                     </div>
-                                   
-                        <FormSelectField Id="customer"
-                                         Label="Customer"
-                                         @bind-Value="workOrder.Customer.Uuid"
-                                         Required="true"
-                                         Options="@CustomerOptions" />
-                  
 
-                     <FormSelectField Id="department"
+                    <FormSelectField Id="customer"
+                                     Label="Customer"
+                                     @bind-Value="workOrder.Customer.Uuid"
+                                     Required="true"
+                                     Options="@CustomerOptions" />
+
+                    <FormSelectField Id="department"
                                      Label="Department"
                                      @bind-Value="workOrder.Department.Uuid"
                                      Required="true"
                                      Options="@DepartmentOptions"
-                                     @bind-Value:after="GetItmeFrmoDepartment" 
-                                     />
+                                     @bind-Value:after="GetItemFromDepartment" />
 
                     <FormSelectField Id="employee"
                                      Label="Employee"
@@ -63,18 +60,127 @@
                                      Options="@EmployeeOptions" />
 
                 </div>
-              
 
-                <button type="submit" class="btn btn-primary">Create</button>
+                <hr />
+
+                <h4>Products</h4>
+
+                @if (isLoadingProducts)
+                {
+                    <p>Loading department products...</p>
+                }
+                else if (ProductOptions == null || !ProductOptions.Any())
+                {
+                    <p>No products are available for the selected department.</p>
+                }
+                else
+                {
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="productSelect" class="form-label">
+                                Select Product
+                            </label>
+
+                            <select id="productSelect"
+                                    class="form-select"
+                                    @bind="SelectedProductUuid">
+                                <option value="">-- Select product --</option>
+
+                                @foreach (var product in AvailableProductOptions)
+                                {
+                                    <option value="@product.Value">
+                                        @product.Text
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    @onclick="AddProduct"
+                                    disabled="@string.IsNullOrWhiteSpace(SelectedProductUuid)">
+                                Add Product
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (SelectedProducts.Any())
+                    {
+                        <h5>Selected Products</h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th style="width: 150px;">Quantity</th>
+                                        <th style="width: 120px;">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var product in SelectedProducts)
+                                    {
+                                        <tr @key="product.ProductUuid">
+                                            <td>@product.ProductName</td>
+
+                                            <td>
+                                                <InputNumber class="form-control"
+                                                             min="1"
+                                                             @bind-Value="product.Quantity" />
+
+                                                @if (product.Quantity < 1)
+                                                {
+                                                    <small class="text-danger">
+                                                        Quantity must be at least 1.
+                                                    </small>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm"
+                                                        @onclick="() => RemoveProduct(product.ProductUuid)">
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No products selected yet.</p>
+                    }
+                }
+
+                @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                {
+                    <div class="alert alert-danger mt-3">
+                        @ErrorMessage
+                    </div>
+                }
+
+                <button type="submit"
+                        class="btn btn-primary mt-3"
+                        disabled="@isSaving">
+                    @(isSaving ? "Creating..." : "Create")
+                </button>
             </EditForm>
-            <br />
-            <br />
-            <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/WorkOrder")'>Cancel</button>
-            <br />
-        </div>
 
+            <br />
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    @onclick='() => NavMan.NavigateTo("/WorkOrder")'
+                    disabled="@isSaving">
+                Cancel
+            </button>
+        </div>
 
     </Authorized>
 </AuthorizeView>
-
 
