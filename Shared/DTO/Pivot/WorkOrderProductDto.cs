@@ -2,11 +2,11 @@
 {
     public class WorkOrderProductDto : BaseEntityDto
     {
-        public Guid WorkOrderUuid { get; set; }
+        public Guid? WorkOrderUuid { get; set; }
 
         public string WorkOrderName { get; set; } = string.Empty;
 
-        public Guid ProductUuid { get; set; }
+        public Guid? ProductUuid { get; set; }
 
         public string ProductName { get; set; } = string.Empty;
 

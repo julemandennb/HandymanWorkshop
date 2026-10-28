@@ -6,24 +6,20 @@ namespace HandymanWorkshop.Services.Interfaces
     public interface IApplicationUserService
     {
         Task<ApplicationUser> CreateAsync(
-           string email,
-           string role
-           );
+                    string email, string role);
 
         Task<ApplicationUser> CreateAsync(
-       string email,
-       string password,
-       string role);
+            string email, string password, string role);
 
-        Task<ApplicationUser?> GetAsync(
-          string email);
+        Task<ApplicationUser?> GetAsync(string email);
 
-        Task<ApplicationUserDto?> GetAllAsyncDTO();
+        Task<List<ApplicationUserDto>> GetAllAsyncDTO();
 
-        Task<bool> DeleteUser(Guid guid);
+        Task<bool> DeleteUserAsync(string id);
 
-        Task<ApplicationUserDto?> NewUser(ApplicationNewUserDto dto);
+        Task<ApplicationUserDto?> NewUser(
+            ApplicationNewUserDto dto);
 
-        Task<bool> ReSendtNewPassword(string email);
+        Task<bool> ResendNewPasswordByIdAsync(string id);
     }
 }

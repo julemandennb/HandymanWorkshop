@@ -1,22 +1,84 @@
 ﻿@page "/Profiles"
+@using Shared.DTO.ApplicationUser
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@attribute [Authorize(Roles = "Admin")]
+@inject HttpClient Http
+@inject NavigationManager NavMan
+@inject IJSRuntime JS
 
 <PageTitle>Profiles</PageTitle>
 
-<AuthorizeView Roles="Admin">
-    <Authorized>
-      
-        
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Profiles</h3>
 
-        <div class="container">
-            <h3>Products</h3>
+        <button class="btn btn-primary"
+                @onclick='() => NavMan.NavigateTo("/Profiles/Create")'>
+            Create Profile
+        </button>
+    </div>
 
-            <a href="/Profiles/Create" class="btn btn-primary">Create Profiles</a>
-
-
-
-
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
         </div>
+    }
 
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">
+            @successMessage
+        </div>
+    }
 
-    </Authorized>
-</AuthorizeView>
+    @if (isLoading)
+    {
+        <p>Loading profiles...</p>
+    }
+    else if (profiles.Count == 0)
+    {
+        <p>No profiles found.</p>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var profile in profiles)
+                {
+                    <tr @key="profile.Id">
+                        <td>@profile.Name</td>
+                        <td>@profile.Email</td>
+                        <td>@profile.Role</td>
+                        <td>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button class="btn btn-warning btn-sm"
+                                        disabled="@isWorking"
+                                        @onclick="() => ResendPassword(profile)">
+                                    Send new password
+                                </button>
+
+                                <button class="btn btn-danger btn-sm"
+                                        disabled="@isWorking"
+                                        @onclick="() => DeleteProfile(profile)">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

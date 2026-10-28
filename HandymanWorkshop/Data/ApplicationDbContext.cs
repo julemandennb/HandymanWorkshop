@@ -108,10 +108,10 @@ namespace HandymanWorkshop.Data
 
             // WorkOrder -> Department
             builder.Entity<WorkOrder>()
-                .HasOne(w => w.Department)
-                .WithMany()
-                .HasForeignKey(w => w.DepartmentId)
-                .OnDelete(DeleteBehavior.Restrict);
+              .HasOne(w => w.Department)
+              .WithMany(d => d.WorkOrders)
+              .HasForeignKey(w => w.DepartmentId)
+              .OnDelete(DeleteBehavior.Restrict);
         }
 
         private static void ConfigureSoftDeleteFilters(ModelBuilder builder)

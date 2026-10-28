@@ -13,7 +13,7 @@ namespace HandymanWorkshop.Help.ApplicationUsers
             {
                 Email = applicationUser.Email,
                 Name = applicationUser.UserName,
-                Role = applicationUser.UserName,
+                Role = "",
                 Id = applicationUser.Id
 
             };

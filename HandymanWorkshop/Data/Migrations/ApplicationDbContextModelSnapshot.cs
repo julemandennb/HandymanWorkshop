@@ -323,9 +323,6 @@ namespace HandymanWorkshop.Migrations
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DepartmentId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -368,8 +365,6 @@ namespace HandymanWorkshop.Migrations
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("DepartmentId1");
 
                     b.HasIndex("EmployeeId");
 
@@ -633,14 +628,10 @@ namespace HandymanWorkshop.Migrations
                         .IsRequired();
 
                     b.HasOne("HandymanWorkshop.Model.Department", "Department")
-                        .WithMany()
+                        .WithMany("WorkOrders")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("HandymanWorkshop.Model.Department", null)
-                        .WithMany("WorkOrders")
-                        .HasForeignKey("DepartmentId1");
 
                     b.HasOne("HandymanWorkshop.Model.Employee", "Employee")
                         .WithMany("WorkOrders")
