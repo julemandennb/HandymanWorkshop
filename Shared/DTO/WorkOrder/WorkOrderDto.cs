@@ -23,12 +23,12 @@ namespace Shared.DTO.WorkOrder
 
         public decimal HourlyRate { get; set; }
 
-        public EmployeeDto? Employee { get; set; }
+        public EmployeeDto? Employee { get; set; } = new EmployeeDto();
 
-        public DepartmentDto? Department { get; set; }
+        public DepartmentDto? Department { get; set; } = new DepartmentDto();
 
-        public ICollection<WorkOrderProductDto>? WorkOrderProducts { get; set; }
+        public ICollection<WorkOrderProductDto>? WorkOrderProducts { get; set; } = new List<WorkOrderProductDto>();
 
-        public CustomerDto? Customer { get; set; }
+        public CustomerDto? Customer { get; set; } = new CustomerDto();
     }
 }

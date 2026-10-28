@@ -1,7 +1,11 @@
 ﻿using HandymanWorkshop.Data;
+using HandymanWorkshop.Help.DepartmentProducts;
+using HandymanWorkshop.Help.Departments;
+using HandymanWorkshop.Help.Products;
 using HandymanWorkshop.Model;
 using HandymanWorkshop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Shared.DTO;
 using Shared.DTO.Pivot;
 
 namespace HandymanWorkshop.Services
@@ -18,36 +22,36 @@ namespace HandymanWorkshop.Services
         // GET ALL
         public async Task<IEnumerable<DepartmentProductDto>> GetAllAsync()
         {
-            return await _context.DepartmentProducts
+           var departmentProducts =  await _context.DepartmentProducts
                 .AsNoTracking()
-                .Select(dp => new DepartmentProductDto
-                {
-                    Uuid = dp.Uuid,
-                    DepartmentUuid = dp.Department.Uuid,
-                    DepartmentName = dp.Department.Name ?? string.Empty,
-                    ProductUuid = dp.Product.Uuid,
-                    ProductName = dp.Product.Name,
-                    Total = dp.Total
-                })
                 .ToListAsync();
+
+            return departmentProducts
+                .Select(DepartmentProductToDto.ToDto)
+                .ToList();
         }
 
         // GET BY UUID
         public async Task<DepartmentProductDto?> GetByUuidAsync(Guid uuid)
         {
-            return await _context.DepartmentProducts
+           var departmentProducts =  await _context.DepartmentProducts
                 .AsNoTracking()
-                .Where(dp => dp.Uuid == uuid)
-                .Select(dp => new DepartmentProductDto
-                {
-                    Uuid = dp.Uuid,
-                    DepartmentUuid = dp.Department.Uuid,
-                    DepartmentName = dp.Department.Name ?? string.Empty,
-                    ProductUuid = dp.Product.Uuid,
-                    ProductName = dp.Product.Name,
-                    Total = dp.Total
-                })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(dp => dp.Uuid == uuid);
+
+            return departmentProducts == null
+                ? null
+                : DepartmentProductToDto.ToDto(departmentProducts);
+        }
+
+        public async Task<List<SelectOptionDto>> GetSelectOption()
+        {
+            var departmentProducts = await _context.DepartmentProducts
+               .AsNoTracking()
+               .ToListAsync();
+
+            return departmentProducts
+                .Select(DepartmentProductToDto.ToSelectOptionDto)
+                .ToList();
         }
 
         // ADD, UPDATE AND DELETE

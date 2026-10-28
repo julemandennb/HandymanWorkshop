@@ -36,7 +36,8 @@ public class CustomersController : ControllerBase
            User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (currentUserId == null)
-            return Unauthorized();
+            //return Unauthorized();
+            return Ok(new List<CustomerDto>());
 
         var thisCustomer = await _customersService.ByApplicationUserId(currentUserId);
         return Ok(thisCustomer);

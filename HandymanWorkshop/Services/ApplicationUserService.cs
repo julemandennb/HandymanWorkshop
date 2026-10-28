@@ -24,13 +24,6 @@ namespace HandymanWorkshop.Services
         {
             var password = GenerateTemporaryPassword();
 
-
-            #if DEBUG
-            #warning Remove temporary password logging when Mailpit or a mail server is configured.
-                        Console.WriteLine(
-                            $"Temporary password for {email}: {password}");
-            #endif
-
             return await CreateAsync(email, password, role);
         }
 

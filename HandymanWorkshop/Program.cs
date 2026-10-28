@@ -116,6 +116,7 @@ namespace HandymanWorkshop
             builder.Services.AddScoped<ICustomersService, CustomersService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IDepartmentProductService,DepartmentProductService>();
+            builder.Services.AddScoped<IWorkOrderService, WorkOrderService>();
         }
 
         private static async Task SeedRolesAsync(WebApplication app)

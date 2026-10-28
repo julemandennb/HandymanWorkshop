@@ -18,6 +18,6 @@ namespace HandymanWorkshop.Services.Interfaces
 
         Task<T?> GetModelByUuidAsync(Guid uuid);
 
-        Task<List<SelectOptionDto>> GetSelectOption();
+        
     }
 }

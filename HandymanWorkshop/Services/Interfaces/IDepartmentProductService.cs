@@ -3,7 +3,7 @@
 
 namespace HandymanWorkshop.Services.Interfaces
 {
-    public interface IDepartmentProductService
+    public interface IDepartmentProductService: ISelectOption
     {
         Task<IEnumerable<DepartmentProductDto>> GetAllAsync();
 

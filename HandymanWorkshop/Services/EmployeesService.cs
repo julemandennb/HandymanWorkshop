@@ -1,15 +1,17 @@
 ﻿using HandymanWorkshop.Data;
+using HandymanWorkshop.Help.Customers;
 using HandymanWorkshop.Help.Departments;
 using HandymanWorkshop.Help.Employees;
 using HandymanWorkshop.Model;
 using HandymanWorkshop.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Shared.DTO;
+using Shared.DTO.Customer;
 using Shared.DTO.Employee;
 
 namespace HandymanWorkshop.Services
 {
-    public class EmployeesService : IEmployeesService
+    public class EmployeesService : IEmployeesService 
     {
         private readonly ApplicationDbContext _context;
 
@@ -158,6 +160,18 @@ namespace HandymanWorkshop.Services
 
             return employees
                 .Select(EmployeeToDto.ToSelectOptionDto)
+                .ToList();
+        }
+
+        public async Task<List<EmployeeDto>> ByApplicationUserId(string ApplicationUserId)
+        {
+            var employees = await _context.Employees
+                .Where(c => c.ApplicationUserId == ApplicationUserId)
+                  .AsNoTracking()
+                  .ToListAsync();
+
+            return employees
+                .Select(EmployeeToDto.ToDto)
                 .ToList();
         }
     }

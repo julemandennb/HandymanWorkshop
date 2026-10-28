@@ -1,5 +1,8 @@
-﻿using HandymanWorkshop.Help.Departments;
+﻿using HandymanWorkshop.Help.Customers;
+using HandymanWorkshop.Help.DepartmentProducts;
+using HandymanWorkshop.Help.Departments;
 using HandymanWorkshop.Help.Employees;
+using HandymanWorkshop.Help.WorkOrderProducts;
 using HandymanWorkshop.Model;
 using Shared.DTO.WorkOrder;
 
@@ -35,14 +38,19 @@ namespace HandymanWorkshop.Help.WorkOrders
             return ToAddDto(
                 workOrder,
                 addEmployee: true,
-                addDepartment: true);
+                addDepartment: true,
+                addCustomer : true,
+                addWorkOrderProducts :true
+                );
         }
 
         // Optionally include related data
         internal static WorkOrderDto ToAddDto(
             WorkOrder workOrder,
             bool addEmployee = false,
-            bool addDepartment = false)
+            bool addDepartment = false,
+            bool addCustomer = false,
+            bool addWorkOrderProducts = false)
         {
             return new WorkOrderDto
             {
@@ -64,8 +72,15 @@ namespace HandymanWorkshop.Help.WorkOrders
                     ? DepartmentToDto.ToDto(workOrder.Department)
                     : null,
 
-                WorkOrderProducts = null,
-                Customer = null
+                Customer = addCustomer && workOrder.Customer != null
+                    ? CustomerToDto.ToDto(workOrder.Customer)
+                    : null,
+
+                WorkOrderProducts = addWorkOrderProducts && workOrder.WorkOrderProducts != null
+                    ? workOrder.WorkOrderProducts.Select(WorkOrderProductToDto.ToDto)
+                    .ToList()
+                    : null,
+
             };
         }
     }

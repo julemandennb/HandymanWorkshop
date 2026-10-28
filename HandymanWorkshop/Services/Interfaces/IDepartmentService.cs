@@ -3,7 +3,7 @@ using Shared.DTO.Departments;
 
 namespace HandymanWorkshop.Services.Interfaces
 {
-    public interface IDepartmentService : IBaseModelService<DepartmentDto, Department>
+    public interface IDepartmentService : IBaseModelService<DepartmentDto, Department>, ISelectOption
     {
     }
 }
