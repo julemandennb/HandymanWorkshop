@@ -1,4 +1,5 @@
 ﻿using HandymanWorkshop.Model;
+using Shared.DTO;
 using Shared.DTO.Customer;
 
 namespace HandymanWorkshop.Services.Interfaces
@@ -7,5 +8,7 @@ namespace HandymanWorkshop.Services.Interfaces
     {
 
         public Task<List<CustomerDto>> ByApplicationUserId(string ApplicationUserId);
+
+        Task<List<SelectOptionDto>> GetSelectOption(string ApplicationUserId);
     }
 }

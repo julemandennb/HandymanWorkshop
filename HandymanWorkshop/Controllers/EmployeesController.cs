@@ -116,7 +116,15 @@ public class EmployeesController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetSelectOption()
     {
-        var departments = await _employeesService.GetSelectOption();
-        return Ok(departments);
+        var employees = await _employeesService.GetSelectOption();
+        return Ok(employees);
+    }
+
+    [HttpGet("getSelectoptionByDepartment/{uuid:guid}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetSelectOption(Guid uuid)
+    {
+        var employees = await _employeesService.getSelectoptionByDepartment(uuid);
+        return Ok(employees);
     }
 }

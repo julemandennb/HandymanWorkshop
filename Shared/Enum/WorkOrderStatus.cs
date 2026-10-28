@@ -1,4 +1,4 @@
-﻿namespace HandymanWorkshop.Enum
+﻿namespace Shared.Enum
 {
     public enum WorkOrderStatus
     {

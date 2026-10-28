@@ -174,5 +174,17 @@ namespace HandymanWorkshop.Services
                 .Select(EmployeeToDto.ToDto)
                 .ToList();
         }
+
+        public async Task<List<SelectOptionDto>> getSelectoptionByDepartment(Guid uuid)
+        {
+            var employees = await _context.Employees
+               .Where(d => d.Department.Uuid == uuid)
+               .AsNoTracking()
+               .ToListAsync();
+
+            return employees
+                .Select(EmployeeToDto.ToSelectOptionDto)
+                .ToList();
+        }
     }
 }

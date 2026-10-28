@@ -71,7 +71,7 @@ public class WorkOrdersController : ControllerBase
     // PUT: api/WorkOrder/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{uuid:guid}")]
-    [Authorize(Roles = "Admin,SuperUser,Customer")]
+    [Authorize(Roles = "Admin,SuperUser,User,Customer")]
     public async Task<IActionResult> PutWorkOrder(Guid uuid, WorkOrderDto workorderDto)
     {
         if (uuid != workorderDto.Uuid)
@@ -98,7 +98,7 @@ public class WorkOrdersController : ControllerBase
     // POST: api/WorkOrder
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    [Authorize(Roles = "Admin,SuperUser,Customer")]
+    [Authorize(Roles = "Admin,SuperUser,User,Customer")]
     public async Task<ActionResult<WorkOrderDto>> PostWorkOrder(WorkOrderDto workorderDto)
     {
         var result = await _workOrderService.CreateAsync(workorderDto);

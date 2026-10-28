@@ -1,6 +1,5 @@
-﻿
-using HandymanWorkshop.Enum;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Shared.Enum;
 using System.ComponentModel.DataAnnotations;
 
 namespace HandymanWorkshop.Model

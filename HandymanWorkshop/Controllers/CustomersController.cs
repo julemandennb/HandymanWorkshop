@@ -131,11 +131,26 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet("getselectoption")]
-    [Authorize(Roles = "Admin,SuperUser,User")]
+    [Authorize(Roles = "Admin,SuperUser,User,Customer")]
     public async Task<ActionResult<IEnumerable<SelectOptionDto>>> GetSelectOption()
     {
-        var departments = await _customersService.GetSelectOption();
-        return Ok(departments);
+        bool IsCustomer =
+        User.IsInRole("Customer");
+
+        if(IsCustomer)
+        {
+            string? currentUserId =
+           User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(currentUserId == null)
+                return Ok(new List<SelectOptionDto>());
+
+            var localcustom = await _customersService.GetSelectOption(currentUserId);
+            return Ok(localcustom);
+        }
+
+
+        var customers = await _customersService.GetSelectOption();
+        return Ok(customers);
     }
 
 

@@ -19,9 +19,9 @@ namespace Shared.DTO.WorkOrder
 
         public DateTime? ScheduledDate { get; set; }
 
-        public decimal EstimatedHours { get; set; }
+        public decimal EstimatedHours { get; set; } = 0;
 
-        public decimal HourlyRate { get; set; }
+        public decimal HourlyRate { get; set; } = 0;
 
         public EmployeeDto? Employee { get; set; } = new EmployeeDto();
 

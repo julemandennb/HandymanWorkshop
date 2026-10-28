@@ -1,0 +1,30 @@
+﻿@page "/WorkOrder"
+@using HandymanWorkshop.Client.Pages.Components 
+@using System.Text.Json.Serialization
+@inject HttpClient Http
+
+
+<PageTitle>WorkOrder</PageTitle>
+
+<div class="container mb-5">
+
+    <h3>WorkOrder</h3>
+    <AuthorizeView Roles="Admin,SuperUser,User">
+         <Authorized>
+            <a href="/WorkOrder/Create" class="btn btn-primary">Create work Order</a>
+        </Authorized>
+    </AuthorizeView>
+
+    @if (workOrders == null || workOrders.Count == 0)
+    {
+        <p><em>cannot find work Order</em></p>
+    }
+    else
+    {
+
+        <WorkOrderTable WorkOrders="@workOrders" />
+
+    }
+
+</div>
+

@@ -130,6 +130,18 @@ namespace HandymanWorkshop.Services
                 .ToList();
         }
 
+        public async Task<List<SelectOptionDto>> GetSelectOption(string ApplicationUserId)
+        {
+            var customer = await _context.Customers
+               .Where(c => c.ApplicationUserId == ApplicationUserId)
+                 .AsNoTracking()
+                 .ToListAsync();
+
+            return customer
+              .Select(CustomerToDto.ToSelectOptionDto)
+              .ToList();
+        }
+
         public async Task<bool> UpdateAsync(Guid uuid, CustomerDto dto)
         {
             var customer = await _context.Customers
