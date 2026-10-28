@@ -152,4 +152,19 @@ public class WorkOrdersController : ControllerBase
 
         return isOk;
     }
+
+    [HttpGet("MyWorkOrders")]
+    [Authorize]
+    public async Task<IActionResult> GetMyWorkOrders()
+    {
+        string? currentUserId =
+                  User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (currentUserId == null)
+            //return Unauthorized();
+            return Ok(new List<CustomerDto>());
+
+        var thisCustomer = await _workOrderService.ByApplicationUserId(currentUserId);
+        return Ok(thisCustomer);
+    }
 }

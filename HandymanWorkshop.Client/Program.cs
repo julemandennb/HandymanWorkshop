@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 namespace HandymanWorkshop.Client
 {
@@ -12,10 +13,16 @@ namespace HandymanWorkshop.Client
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddAuthenticationStateDeserialization();
 
-            builder.Services.AddScoped(s =>
+            builder.Services.AddScoped(sp =>
+            {
+                var client = new HttpClient
+                {
+                    BaseAddress = new Uri(
+                        builder.HostEnvironment.BaseAddress)
+                };
 
-                new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) }
-            );
+                return client;
+            });
 
             await builder.Build().RunAsync();
         }

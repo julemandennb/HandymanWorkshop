@@ -1,7 +1,102 @@
 ﻿@page "/"
+@using Shared.DTO.WorkOrder
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container">
+   
 
-Welcome to your new app.
+    <AuthorizeView>
+        <Authorized>
+            <h3>My Work Orders</h3>
+            @if (workOrders == null)
+            {
+                <p>Loading work orders...</p>
+            }
+            else if (workOrders.Count == 0)
+            {
+                <p>No work orders are assigned to you.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Scheduled Date</th>
+                            <th>Estimated Hours</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in workOrders)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.ScheduledDate</td>
+                                <td>@item.EstimatedHours</td>
+                                <td>@item.Status</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm"
+                                       href="@($"/WorkOrder/Details/{item.Uuid}")">
+                                        Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </Authorized>
+
+        <NotAuthorized>
+            <div class="text-center mt-5">
+                <h3>Welcome to Handyman Workshop!</h3>
+
+                <p>
+                    Please log in to see your work orders and access more information.
+                </p>
+
+                <p>
+                    Don't have an account? Contact us to request access.
+                </p>
+
+                <a class="btn btn-primary" href="/Account/Login">
+                    Log In
+                </a>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
+
+@code {
+    private List<WorkOrderDto>? workOrders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState =
+            await AuthStateProvider.GetAuthenticationStateAsync();
+
+        if (authState.User.Identity?.IsAuthenticated != true)
+        {
+            workOrders = new List<WorkOrderDto>();
+            return;
+        }
+
+        try
+        {
+            workOrders =
+                await Http.GetFromJsonAsync<List<WorkOrderDto>>(
+                    "api/WorkOrders/MyWorkOrders");
+        }
+        catch (HttpRequestException)
+        {
+            workOrders = new List<WorkOrderDto>();
+        }
+    }
+}
