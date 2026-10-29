@@ -1,21 +1,76 @@
 ﻿@using Shared.DTO.Departments
+@using Microsoft.AspNetCore.Components.Authorization
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Postcode</th>
-            <th></th>
-        </tr>
-    </thead>
+@if (showFliter)
+{
+    <div class="card shadow-sm mb-4 p-2">
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="departmentSearch" class="form-label">Search</label>
+                <input id="departmentSearch"
+                       type="search"
+                       class="form-control"
+                       placeholder="Search name, email, address or ID..."
+                       @bind="searchTerm"
+                       @bind:event="oninput" />
+            </div>
 
-    <tbody>
-        @if (Departments != null)
-        {
-            @foreach (var item in Departments)
+            <div class="col-md-3">
+                <label for="departmentSortBy" class="form-label">Sort by</label>
+                <InputSelect id="departmentSortBy"
+                        class="form-select"
+                        @bind-Value="sortBy">
+                    <option value="Name">Name</option>
+                    <option value="Email">Email</option>
+                    <option value="Address">Address</option>
+                    <option value="Postcode">Postcode</option>
+                    <option value="Uuid">ID</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-3">
+                <label for="departmentSortDirection" class="form-label">
+                    Sort direction
+                </label>
+                <InputSelect id="departmentSortDirection"
+                        class="form-select"
+                        @bind-Value="sortDescending">
+                    <option value="false">Ascending</option>
+                    <option value="true">Descending</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button"
+                        class="btn btn-secondary"
+                        @onclick="ClearFilters">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <p>
+            Showing @FilteredDepartments.Count of
+            @(Departments?.Count() ?? 0) departments
+        </p>
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Postcode</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in FilteredDepartments)
             {
                 <tr>
                     <td>@item.Uuid</td>
@@ -25,14 +80,14 @@
                     <td>@item.Postcode</td>
                     <td>
                         <a href="/Department/Details/@item.Uuid"
-                           class="btn btn-info btn-sm">
+                           class="btn btn-info btn-sm me-1">
                             Details
                         </a>
 
                         <AuthorizeView Roles="Admin,SuperUser">
                             <Authorized Context="authContext">
                                 <a href="/Department/Edit/@item.Uuid"
-                                   class="btn btn-info btn-sm">
+                                   class="btn btn-info btn-sm me-1">
                                     Edit
                                 </a>
 
@@ -45,11 +100,93 @@
                     </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Parameter]
     public IEnumerable<DepartmentDto>? Departments { get; set; }
+
+    [Parameter]
+    public bool showFliter { get; set; } = false;
+
+    private string searchTerm = string.Empty;
+    private string sortBy = "Name";
+    private bool sortDescending;
+
+    private List<DepartmentDto> FilteredDepartments
+    {
+        get
+        {
+            IEnumerable<DepartmentDto> query =
+                Departments ?? Enumerable.Empty<DepartmentDto>();
+
+            // Search across department fields
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var search = searchTerm.Trim();
+
+                query = query.Where(d =>
+                    (d.Name?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (d.Email?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (d.Address?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (d.Postcode?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    d.Uuid.ToString().Contains(
+                        search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Sort departments
+            switch (sortBy)
+            {
+                case "Uuid":
+                    query = sortDescending
+                        ? query.OrderByDescending(d => d.Uuid)
+                        : query.OrderBy(d => d.Uuid);
+                    break;
+
+                case "Email":
+                    query = sortDescending
+                        ? query.OrderByDescending(d => d.Email)
+                        : query.OrderBy(d => d.Email);
+                    break;
+
+                case "Address":
+                    query = sortDescending
+                        ? query.OrderByDescending(d => d.Address)
+                        : query.OrderBy(d => d.Address);
+                    break;
+
+                case "Postcode":
+                    query = sortDescending
+                        ? query.OrderByDescending(d => d.Postcode)
+                        : query.OrderBy(d => d.Postcode);
+                    break;
+
+                case "Name":
+                default:
+                    query = sortDescending
+                        ? query.OrderByDescending(d => d.Name)
+                        : query.OrderBy(d => d.Name);
+                    break;
+            }
+
+            return query.ToList();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = string.Empty;
+        sortBy = "Name";
+        sortDescending = false;
+    }
 }

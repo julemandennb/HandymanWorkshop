@@ -11,7 +11,7 @@
     <h3>Employees</h3>
     <AuthorizeView Roles="Admin,SuperUser">
          <Authorized>
-            <a href="/Employee/Create" class="btn btn-primary">Create Employee</a>
+            <a href="/Employee/Create" class="btn btn-primary mb-5">Create Employee</a>
         </Authorized>
     </AuthorizeView>
 
@@ -22,7 +22,7 @@
     else
     {
 
-        <EmployeeTable Employees="@employees" />
+        <EmployeeTable showFliter="true" Employees="@employees" />
 
     }
 

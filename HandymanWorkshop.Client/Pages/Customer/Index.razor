@@ -10,7 +10,7 @@
     <h3>Customers</h3>
     <AuthorizeView Roles="Admin,SuperUser,User">
          <Authorized>
-            <a href="/customer/Create" class="btn btn-primary">Create customer</a>
+            <a href="/customer/Create" class="btn btn-primary mb-5">Create customer</a>
         </Authorized>
     </AuthorizeView>
 
@@ -21,7 +21,7 @@
     else
     {
 
-        <CustomerTable customers="@customers" />
+        <CustomerTable showFliter="true" customers="@customers" />
 
     }
 

@@ -11,7 +11,7 @@
     <h3>Departments</h3>
     <AuthorizeView Roles="Admin,SuperUser">
          <Authorized>
-            <a href="/Department/Create" class="btn btn-primary">Create Department</a>
+            <a href="/Department/Create" class="btn btn-primary mb-5">Create Department</a>
         </Authorized>
     </AuthorizeView>
 
@@ -22,7 +22,7 @@
     else
     {
 
-        <DepartmentTable Departments="@departments" />
+        <DepartmentTable showFliter="true" Departments="@departments" />
 
     }
 

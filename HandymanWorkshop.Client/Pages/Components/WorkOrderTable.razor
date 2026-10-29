@@ -1,38 +1,114 @@
 ﻿@using Shared.DTO.WorkOrder
+@using Shared.Enum
+@using Microsoft.AspNetCore.Components.Authorization
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>ScheduledDate</th>
-            <th>EstimatedHours</th>
-            <th></th>
-        </tr>
-    </thead>
+@if (showFliter)
+{
+    <div class="card shadow-sm mb-4 p-2">
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Search</label>
+                <input id="search"
+                type="search"
+                class="form-control"
+                placeholder="Search title, description or ID..."
+                @bind="searchTerm"
+                @bind:event="oninput" />
+            </div>
 
-    <tbody>
-        @if (WorkOrders != null)
-        {
-            @foreach (var item in WorkOrders)
+            <div class="col-md-3">
+                <label for="statusFilter" class="form-label">Status</label>
+                <select id="statusFilter"
+                class="form-select"
+                @bind="statusFilter">
+                    <option value="">All statuses</option>
+                    @foreach (var status in Enum.GetValues<WorkOrderStatus>())
+                    {
+                        <option value="@status.ToString()">@StatusLabel(status)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="scheduledFrom" class="form-label">
+                    Scheduled from
+                </label>
+                <input id="scheduledFrom"
+                type="date"
+                class="form-control"
+                @bind="scheduledFrom" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="sortBy" class="form-label">Sort by</label>
+                <InputSelect id="sortBy"
+                class="form-select"
+                @bind-Value="sortBy">
+                    <option value="ScheduledDate">Scheduled date</option>
+                    <option value="Title">Title</option>
+                    <option value="Status">Status</option>
+                    <option value="EstimatedHours">Estimated hours</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-3">
+                <label for="sortDirection" class="form-label">Sort direction</label>
+                <InputSelect id="sortDirection"
+                class="form-select"
+                             @bind-Value="sortDescending">
+                    <option value="false">Ascending</option>
+                    <option value="true">Descending</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="button"
+                class="btn btn-secondary"
+                @onclick="ClearFilters">
+                    Clear filters
+                </button>
+            </div>
+        </div>
+
+        <p>
+            Showing @FilteredWorkOrders.Count() of @(WorkOrders?.Count() ?? 0)
+            work orders
+        </p>
+
+    </div>
+}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Scheduled date</th>
+                <th>Estimated hours</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in FilteredWorkOrders)
             {
                 <tr>
                     <td>@item.Uuid</td>
                     <td>@item.Title</td>
-                    <td>@item.Status</td>
+                    <td>@StatusLabel(item.Status)</td>
                     <td>@item.ScheduledDate?.ToString("dd/MM/yyyy")</td>
                     <td>@item.EstimatedHours</td>
                     <td>
                         <a href="/WorkOrder/Details/@item.Uuid"
-                           class="btn btn-info btn-sm">
+                           class="btn btn-info btn-sm me-1">
                             Details
                         </a>
 
                         <AuthorizeView Roles="Admin,SuperUser,User">
                             <Authorized Context="authContext">
                                 <a href="/WorkOrder/Edit/@item.Uuid"
-                                   class="btn btn-info btn-sm">
+                                   class="btn btn-info btn-sm me-1">
                                     Edit
                                 </a>
                             </Authorized>
@@ -49,11 +125,111 @@
                     </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Parameter]
     public IEnumerable<WorkOrderDto>? WorkOrders { get; set; }
+
+    [Parameter]
+    public bool showFliter { get; set; } = false;
+
+    private string searchTerm = string.Empty;
+    private string statusFilter = string.Empty;
+    private DateTime? scheduledFrom;
+    private string sortBy = "ScheduledDate";
+    private bool sortDescending;
+
+    private List<WorkOrderDto> FilteredWorkOrders
+    {
+        get
+        {
+            IEnumerable<WorkOrderDto> query =
+                WorkOrders ?? Enumerable.Empty<WorkOrderDto>();
+
+            // Search by title, description or ID
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var search = searchTerm.Trim();
+
+                query = query.Where(w =>
+                    (w.Title?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (w.Description?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    w.Uuid.ToString().Contains(
+                        search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Filter by status
+            if (!string.IsNullOrWhiteSpace(statusFilter))
+            {
+                query = query.Where(w =>
+                    w.Status.ToString() == statusFilter);
+            }
+
+            // Filter by scheduled date
+            if (scheduledFrom.HasValue)
+            {
+                query = query.Where(w =>
+                    w.ScheduledDate.HasValue &&
+                    w.ScheduledDate.Value.Date >= scheduledFrom.Value.Date);
+            }
+
+            // Sort results
+            switch (sortBy)
+            {
+                case "Title":
+                    query = sortDescending
+                        ? query.OrderByDescending(w => w.Title)
+                        : query.OrderBy(w => w.Title);
+                    break;
+
+                case "Status":
+                    query = sortDescending
+                        ? query.OrderByDescending(w => w.Status)
+                        : query.OrderBy(w => w.Status);
+                    break;
+
+                case "EstimatedHours":
+                    query = sortDescending
+                        ? query.OrderByDescending(w => w.EstimatedHours)
+                        : query.OrderBy(w => w.EstimatedHours);
+                    break;
+
+                case "ScheduledDate":
+                default:
+                    query = sortDescending
+                        ? query.OrderByDescending(
+                            w => w.ScheduledDate.HasValue)
+                            .ThenByDescending(w => w.ScheduledDate)
+                        : query.OrderBy(
+                            w => !w.ScheduledDate.HasValue)
+                            .ThenBy(w => w.ScheduledDate);
+                    break;
+            }
+
+            return query.ToList();
+        }
+    }
+
+    private static string StatusLabel(WorkOrderStatus status)
+    {
+        return status == WorkOrderStatus.InProgress
+            ? "In Progress"
+            : status.ToString();
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = string.Empty;
+        statusFilter = string.Empty;
+        scheduledFrom = null;
+        sortBy = "ScheduledDate";
+        sortDescending = false;
+    }
 }

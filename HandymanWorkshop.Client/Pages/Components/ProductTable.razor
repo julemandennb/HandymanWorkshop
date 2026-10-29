@@ -1,18 +1,74 @@
 ﻿@using Shared.DTO.Product
+@using Microsoft.AspNetCore.Components.Authorization
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Products != null)
-        {
-            @foreach (var product in Products)
+@if (showFliter)
+{
+    <div class="card shadow-sm mb-4 p-2">
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="productSearch" class="form-label">Search</label>
+                <input id="productSearch"
+                type="search"
+                class="form-control"
+                placeholder="Search name, description or ID..."
+                @bind="searchTerm"
+                @bind:event="oninput" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="productSortBy" class="form-label">Sort by</label>
+                <InputSelect id="productSortBy"
+                class="form-select"
+                @bind-Value="sortBy">
+                    <option value="Name">Name</option>
+                    <option value="Description">Description</option>
+                    <option value="Price">Price</option>
+                    <option value="Uuid">ID</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-3">
+                <label for="productSortDirection" class="form-label">
+                    Sort direction
+                </label>
+                <InputSelect id="productSortDirection"
+                class="form-select"
+                @bind-Value="sortDescending">
+                    <option value="false">Ascending</option>
+                    <option value="true">Descending</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button"
+                class="btn btn-secondary"
+                @onclick="ClearFilters">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <p>
+            Showing @FilteredProducts.Count of
+            @(Products?.Count() ?? 0) products
+        </p>
+
+    </div>
+}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var product in FilteredProducts)
             {
                 <tr @key="product.Uuid">
                     <td>@product.Name</td>
@@ -20,14 +76,14 @@
                     <td>@product.Price.ToString()</td>
                     <td>
                         <a href="/Product/Details/@product.Uuid"
-                           class="btn btn-info btn-sm">
+                           class="btn btn-info btn-sm me-1">
                             Details
                         </a>
 
                         <AuthorizeView Roles="Admin,SuperUser">
                             <Authorized Context="authContext">
                                 <a href="/Product/Edit/@product.Uuid"
-                                   class="btn btn-info btn-sm">
+                                   class="btn btn-info btn-sm me-1">
                                     Edit
                                 </a>
 
@@ -40,11 +96,81 @@
                     </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Parameter]
     public IEnumerable<ProductDto>? Products { get; set; }
+
+    [Parameter]
+    public bool showFliter { get; set; } = false;
+
+    private string searchTerm = string.Empty;
+    private string sortBy = "Name";
+    private bool sortDescending;
+
+    private List<ProductDto> FilteredProducts
+    {
+        get
+        {
+            IEnumerable<ProductDto> query =
+                Products ?? Enumerable.Empty<ProductDto>();
+
+            // Search by product name, description or ID
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var search = searchTerm.Trim();
+
+                query = query.Where(p =>
+                    (p.Name?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (p.Description?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    p.Uuid.ToString().Contains(
+                        search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Sort products
+            switch (sortBy)
+            {
+                case "Uuid":
+                    query = sortDescending
+                        ? query.OrderByDescending(p => p.Uuid)
+                        : query.OrderBy(p => p.Uuid);
+                    break;
+
+                case "Description":
+                    query = sortDescending
+                        ? query.OrderByDescending(p => p.Description)
+                        : query.OrderBy(p => p.Description);
+                    break;
+
+                case "Price":
+                    query = sortDescending
+                        ? query.OrderByDescending(p => p.Price)
+                        : query.OrderBy(p => p.Price);
+                    break;
+
+                case "Name":
+                default:
+                    query = sortDescending
+                        ? query.OrderByDescending(p => p.Name)
+                        : query.OrderBy(p => p.Name);
+                    break;
+            }
+
+            return query.ToList();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = string.Empty;
+        sortBy = "Name";
+        sortDescending = false;
+    }
 }

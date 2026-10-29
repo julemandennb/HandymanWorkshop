@@ -1,22 +1,77 @@
 ﻿@using Shared.DTO.Customer
+@using Microsoft.AspNetCore.Components.Authorization
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>PhoneNumber</th>
-            <th>Address</th>
-            <th>Postcode</th>
-            <th></th>
-        </tr>
-    </thead>
+@if (showFliter)
+{
+  <div class="card shadow-sm mb-4 p-2">
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="customerSearch" class="form-label">Search</label>
+                <input id="customerSearch"
+                       type="search"
+                       class="form-control"
+                       placeholder="Search name, email, phone, address..."
+                       @bind="searchTerm"
+                       @bind:event="oninput" />
+            </div>
 
-    <tbody>
-        @if (customers != null)
-        {
-            @foreach (var item in customers)
+            <div class="col-md-3">
+                <label for="customerSortBy" class="form-label">Sort by</label>
+                <InputSelect id="customerSortBy"
+                        class="form-select"
+                        @bind-Value="sortBy">
+                    <option value="Name">Name</option>
+                    <option value="Email">Email</option>
+                    <option value="PhoneNumber">Phone number</option>
+                    <option value="Address">Address</option>
+                    <option value="Postcode">Postcode</option>
+                    <option value="Uuid">ID</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-3">
+                <label for="customerSortDirection" class="form-label">
+                    Sort direction
+                </label>
+                <InputSelect id="customerSortDirection"
+                        class="form-select"
+                        @bind-Value="sortDescending">
+                    <option value="false">Ascending</option>
+                    <option value="true">Descending</option>
+                </InputSelect>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button"
+                        class="btn btn-secondary"
+                        @onclick="ClearFilters">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <p>
+            Showing @FilteredCustomers.Count of
+            @(customers?.Count() ?? 0) customers
+        </p>
+</div>
+}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone number</th>
+                <th>Address</th>
+                <th>Postcode</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in FilteredCustomers)
             {
                 <tr>
                     <td>@item.Uuid</td>
@@ -27,14 +82,14 @@
                     <td>@item.Postcode</td>
                     <td>
                         <a href="/Customer/Details/@item.Uuid"
-                           class="btn btn-info btn-sm">
+                           class="btn btn-info btn-sm me-1">
                             Details
                         </a>
 
                         <AuthorizeView Roles="Admin,SuperUser,Customer">
                             <Authorized Context="authContext">
                                 <a href="/Customer/Edit/@item.Uuid"
-                                   class="btn btn-info btn-sm">
+                                   class="btn btn-info btn-sm me-1">
                                     Edit
                                 </a>
 
@@ -47,11 +102,102 @@
                     </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Parameter]
     public IEnumerable<CustomerDto>? customers { get; set; }
+
+    [Parameter]
+    public bool showFliter { get; set; } = false;
+
+    private string searchTerm = string.Empty;
+    private string sortBy = "Name";
+    private bool sortDescending;
+
+    private List<CustomerDto> FilteredCustomers
+    {
+        get
+        {
+            IEnumerable<CustomerDto> query =
+                customers ?? Enumerable.Empty<CustomerDto>();
+
+            // Search customer fields
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var search = searchTerm.Trim();
+
+                query = query.Where(c =>
+                    (c.Name?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (c.Email?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (c.PhoneNumber?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (c.Address?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    (c.Postcode?.Contains(
+                        search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ||
+                    c.Uuid.ToString().Contains(
+                        search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Sort customers
+            switch (sortBy)
+            {
+                case "Uuid":
+                    query = sortDescending
+                        ? query.OrderByDescending(c => c.Uuid)
+                        : query.OrderBy(c => c.Uuid);
+                    break;
+
+                case "Email":
+                    query = sortDescending
+                        ? query.OrderByDescending(c => c.Email)
+                        : query.OrderBy(c => c.Email);
+                    break;
+
+                case "PhoneNumber":
+                    query = sortDescending
+                        ? query.OrderByDescending(c => c.PhoneNumber)
+                        : query.OrderBy(c => c.PhoneNumber);
+                    break;
+
+                case "Address":
+                    query = sortDescending
+                        ? query.OrderByDescending(c => c.Address)
+                        : query.OrderBy(c => c.Address);
+                    break;
+
+                case "Postcode":
+                    query = sortDescending
+                        ? query.OrderByDescending(c => c.Postcode)
+                        : query.OrderBy(c => c.Postcode);
+                    break;
+
+                case "Name":
+                default:
+                    query = sortDescending
+                        ? query.OrderByDescending(c => c.Name)
+                        : query.OrderBy(c => c.Name);
+                    break;
+            }
+
+            return query.ToList();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        searchTerm = string.Empty;
+        sortBy = "Name";
+        sortDescending = false;
+    }
 }

@@ -132,5 +132,76 @@ namespace HandymanWorkshop.Client.Pages.Profiles
                 isWorking = false;
             }
         }
+
+
+        private string searchTerm = string.Empty;
+        private string sortBy = "Name";
+        private bool sortDescending;
+
+        private List<ApplicationUserDto> FilteredProfiles
+        {
+            get
+            {
+                IEnumerable<ApplicationUserDto> query = profiles;
+
+                // Search by name, email, role or ID
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    var search = searchTerm.Trim();
+
+                    query = query.Where(p =>
+                        (p.Name?.Contains(
+                            search, StringComparison.OrdinalIgnoreCase) ?? false)
+                        ||
+                        (p.Email?.Contains(
+                            search, StringComparison.OrdinalIgnoreCase) ?? false)
+                        ||
+                        (p.Role?.Contains(
+                            search, StringComparison.OrdinalIgnoreCase) ?? false)
+                        ||
+                        (p.Id?.Contains(
+                            search, StringComparison.OrdinalIgnoreCase) ?? false));
+                }
+
+                // Sort profiles
+                switch (sortBy)
+                {
+                    case "Email":
+                        query = sortDescending
+                            ? query.OrderByDescending(p => p.Email)
+                            : query.OrderBy(p => p.Email);
+                        break;
+
+                    case "Role":
+                        query = sortDescending
+                            ? query.OrderByDescending(p => p.Role)
+                            : query.OrderBy(p => p.Role);
+                        break;
+
+                    case "Id":
+                        query = sortDescending
+                            ? query.OrderByDescending(p => p.Id)
+                            : query.OrderBy(p => p.Id);
+                        break;
+
+                    case "Name":
+                    default:
+                        query = sortDescending
+                            ? query.OrderByDescending(p => p.Name)
+                            : query.OrderBy(p => p.Name);
+                        break;
+                }
+
+                return query.ToList();
+            }
+        }
+
+        private void ClearFilters()
+        {
+            searchTerm = string.Empty;
+            sortBy = "Name";
+            sortDescending = false;
+        }
+
     }
 }

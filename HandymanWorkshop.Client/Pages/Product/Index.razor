@@ -9,11 +9,11 @@
 
     <AuthorizeView Roles="Admin,SuperUser">
         <Authorized Context="authContext">
-            <a href="/Product/Create" class="btn btn-primary mb-3">
+            <a href="/Product/Create" class="btn btn-primary mb-5">
                 Create Product
             </a>
         </Authorized>
     </AuthorizeView>
 
-    <ProductTable Products="@products" />
+    <ProductTable showFliter="true" Products="@products" />
 </div>

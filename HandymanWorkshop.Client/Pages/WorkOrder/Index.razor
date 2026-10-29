@@ -11,7 +11,7 @@
     <h3>WorkOrder</h3>
     <AuthorizeView Roles="Admin,SuperUser,User,Customer">
          <Authorized>
-            <a href="/WorkOrder/Create" class="btn btn-primary">Create work Order</a>
+            <a href="/WorkOrder/Create" class="btn btn-primary mb-5">Create work Order</a>
         </Authorized>
     </AuthorizeView>
 
@@ -22,7 +22,7 @@
     else
     {
 
-        <WorkOrderTable WorkOrders="@workOrders" />
+        <WorkOrderTable showFliter="true" WorkOrders="@workOrders" />
 
     }
 
