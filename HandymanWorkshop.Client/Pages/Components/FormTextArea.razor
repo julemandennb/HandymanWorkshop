@@ -1,0 +1,42 @@
+﻿@using System.Linq.Expressions
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="@DivClass">
+    <label class="form-label" for="@Id">@Label</label>
+
+    <div>
+        <InputTextArea class="form-input"
+                       id="@Id"
+                       name="@Id"
+                       Value="@Value"
+                       ValueChanged="@ValueChanged"
+                       ValueExpression="@ValueExpression"
+                       required="@Required" />
+
+        <ValidationMessage For="@ValueExpression" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string DivClass { get; set; } =
+        "mb-3 d-flex flex-row justify-content-between align-items-start";
+
+    [Parameter]
+    public string Id { get; set; } = "";
+
+    [Parameter]
+    public string Label { get; set; } = "";
+
+    [Parameter]
+    public bool Required { get; set; }
+
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<string?>>? ValueExpression { get; set; }
+}

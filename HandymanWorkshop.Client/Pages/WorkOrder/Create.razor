@@ -22,23 +22,15 @@
                                    @bind-Value="workOrder.Title"
                                    Required="true" />
 
-                    <FormTextField Id="description"
-                                   Label="Description"
-                                   @bind-Value="workOrder.Description"
-                                   Required="true" />
+                    <FormTextArea Id="description"
+                                  Label="Description"
+                                  @bind-Value="workOrder.Description"
+                                  Required="true" />
 
-                    <div class="mb-3 d-flex flex-row justify-content-between align-items-start">
-                        <label class="form-label" for="scheduledDate">
-                            Scheduled Date
-                        </label>
-
-                        <div>
-                            <InputDate class="form-input"
-                                       id="scheduledDate"
-                                       name="scheduledDate"
-                                       @bind-Value="workOrder.ScheduledDate" />
-                        </div>
-                    </div>
+                    <FormDate Id="scheduledDate"
+                              Label="Scheduled Date"
+                              @bind-Value="workOrder.ScheduledDate"
+                                  Required="true" />
 
                     <FormSelectField Id="customer"
                                      Label="Customer"
@@ -76,30 +68,22 @@
                 else
                 {
                     <div class="row mb-3">
+      
                         <div class="col-md-8">
-                            <label for="productSelect" class="form-label">
-                                Select Product
-                            </label>
 
-                            <select id="productSelect"
-                                    class="form-select"
-                                    @bind="SelectedProductUuid">
-                                <option value="">-- Select product --</option>
-
-                                @foreach (var product in AvailableProductOptions)
-                                {
-                                    <option value="@product.Value">
-                                        @product.Text
-                                    </option>
-                                }
-                            </select>
+                                <FormSelectField Id="productSelect"
+                                         Label="Select Product"
+                                             DivClass="d-flex flex-row justify-content-between align-items-start"
+                                         @bind-Value="SelectedProductUuid"
+                                         Required="false"
+                                         Options="@AvailableProductOptions" />
                         </div>
 
                         <div class="col-md-4 d-flex align-items-end">
                             <button type="button"
                                     class="btn btn-secondary"
                                     @onclick="AddProduct"
-                                    disabled="@string.IsNullOrWhiteSpace(SelectedProductUuid)">
+                                    disabled="@(SelectedProductUuid == Guid.Empty)">
                                 Add Product
                             </button>
                         </div>

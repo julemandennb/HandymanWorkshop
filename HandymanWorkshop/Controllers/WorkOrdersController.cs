@@ -129,8 +129,7 @@ public class WorkOrdersController : ControllerBase
     {
         bool canViewAllDetails =
             User.IsInRole("Admin") ||
-            User.IsInRole("SuperUser") ||
-            User.IsInRole("User");
+            User.IsInRole("SuperUser");
 
         WorkOrder? workOrder =
             await _workOrderService.GetModelByUuidAsync(uuid);
@@ -147,6 +146,8 @@ public class WorkOrdersController : ControllerBase
 
         string? currentUserId =
             User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        
 
         bool isOk = currentUserId != null &&  (workOrder.Customer?.ApplicationUserId == currentUserId || workOrder.Employee?.ApplicationUserId == currentUserId);
 

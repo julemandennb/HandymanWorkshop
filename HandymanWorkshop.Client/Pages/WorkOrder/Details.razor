@@ -28,12 +28,15 @@
         <div class="mb-4">
             <p><strong>Id:</strong> @workOrder.Uuid</p>
             <p><strong>Title:</strong> @workOrder.Title</p>
-            <p><strong>Description:</strong> @workOrder.Description</p>
+            <p>
+                <strong>Description:</strong><br />
+                <span style="white-space: pre-line;">@workOrder.Description</span>
+            </p>
             <p><strong>Status:</strong> @workOrder.Status</p>
-            <p><strong>Scheduled Date:</strong> @workOrder.ScheduledDate</p>
+            <p><strong>Scheduled Date:</strong> @workOrder.ScheduledDate?.ToString("dd/MM/yyyy")</p>
             <p><strong>Estimated Hours:</strong> @workOrder.EstimatedHours</p>
-            <p><strong>Hourly Rate:</strong> @workOrder.HourlyRate.ToString("C")</p>
-            <p><strong>Labor Price:</strong> @price.ToString("C")</p>
+            <p><strong>Hourly Rate:</strong> @workOrder.HourlyRate.ToString("C", dkCulture)</p>
+            <p><strong>Labor Price:</strong> @price.ToString("C", dkCulture)</p>
 
             <p><strong>Employee:</strong> @workOrder.Employee?.Name</p>
             <p><strong>Department:</strong> @workOrder.Department?.Name</p>
@@ -68,8 +71,8 @@
                             <tr>
                                 <td>@item.ProductName</td>
                                 <td>@item.Quantity</td>
-                                <td>@item.UnitPrice.ToString("C")</td>
-                                <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                                <td>@item.UnitPrice.ToString("C", dkCulture)</td>
+                                <td>@((item.Quantity * item.UnitPrice).ToString("C", dkCulture))</td>
                                 <td>@item.AddedByUser</td>
                             </tr>
                         }
@@ -80,7 +83,7 @@
                                 Total Products
                             </th>
                             <th colspan="2">
-                                @productTotal.ToString("C")
+                                @productTotal.ToString("C", dkCulture)
                             </th>
                         </tr>
                         <tr>
@@ -88,7 +91,7 @@
                                 Labor + Products
                             </th>
                             <th colspan="2">
-                                @((price + productTotal).ToString("C"))
+                                @((price + productTotal).ToString("C", dkCulture))
                             </th>
                         </tr>
                     </tfoot>

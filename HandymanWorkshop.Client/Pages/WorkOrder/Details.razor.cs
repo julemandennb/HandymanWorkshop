@@ -4,6 +4,7 @@ using Shared.DTO.WorkOrder;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace HandymanWorkshop.Client.Pages.WorkOrder
 {
@@ -18,6 +19,8 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
         protected NavigationManager? NavMan { get; set; }
 
         protected decimal price { get; set; }
+
+        protected CultureInfo dkCulture = CultureInfo.GetCultureInfo("da-DK");
 
         protected decimal productTotal =>
             workOrder?.WorkOrderProducts?.Sum(

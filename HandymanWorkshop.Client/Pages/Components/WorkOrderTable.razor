@@ -21,7 +21,7 @@
                     <td>@item.Uuid</td>
                     <td>@item.Title</td>
                     <td>@item.Status</td>
-                    <td>@item.ScheduledDate</td>
+                    <td>@item.ScheduledDate?.ToString("dd/MM/yyyy")</td>
                     <td>@item.EstimatedHours</td>
                     <td>
                         <a href="/WorkOrder/Details/@item.Uuid"
@@ -29,13 +29,17 @@
                             Details
                         </a>
 
-                        <AuthorizeView Roles="Admin,SuperUser">
+                        <AuthorizeView Roles="Admin,SuperUser,User">
                             <Authorized Context="authContext">
                                 <a href="/WorkOrder/Edit/@item.Uuid"
                                    class="btn btn-info btn-sm">
                                     Edit
                                 </a>
+                            </Authorized>
+                        </AuthorizeView>
 
+                        <AuthorizeView Roles="Admin,SuperUser">
+                            <Authorized Context="authContext">
                                 <a href="/WorkOrder/Delete/@item.Uuid"
                                    class="btn btn-danger btn-sm">
                                     Delete

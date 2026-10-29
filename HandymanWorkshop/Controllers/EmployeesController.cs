@@ -57,7 +57,7 @@ public class EmployeesController : ControllerBase
     // PUT: api/Employee/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{uuid:guid}")]
-    [Authorize(Roles = "Admin,SuperUser,User")]
+    [Authorize(Roles = "Admin,SuperUser")]
     public async Task<IActionResult> PutEmployee(Guid uuid, EmployeeDto employeeDto)
     {
         if (uuid != employeeDto.Uuid)
@@ -99,7 +99,7 @@ public class EmployeesController : ControllerBase
 
     // DELETE: api/Employee/5
     [HttpDelete("{uuid:guid}")]
-    [Authorize(Roles = "Admin,SuperUser,User")]
+    [Authorize(Roles = "Admin,SuperUser")]
     public async Task<IActionResult> DeleteEmployee(Guid uuid)
     {
         var deleted = await _employeesService.DeleteAsync(uuid);

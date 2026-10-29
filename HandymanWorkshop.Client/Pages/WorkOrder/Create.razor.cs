@@ -32,7 +32,7 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
         private List<SelectedWorkOrderProduct> SelectedProducts { get; set; }
             = new List<SelectedWorkOrderProduct>();
 
-        private string SelectedProductUuid { get; set; } = string.Empty;
+        private Guid SelectedProductUuid { get; set; } = Guid.Empty;
 
         private bool isLoadingProducts { get; set; }
 
@@ -69,7 +69,7 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
             EmployeeOptions = new List<SelectOptionDto>();
             ProductOptions = new List<SelectOptionDto>();
             SelectedProducts.Clear();
-            SelectedProductUuid = string.Empty;
+            SelectedProductUuid = Guid.Empty;
 
             if (workOrder.Department == null ||
                 workOrder.Department.Uuid == Guid.Empty)
@@ -114,14 +114,9 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
 
         private void AddProduct()
         {
-            if (!Guid.TryParse(SelectedProductUuid, out var productUuid))
-            {
-                ErrorMessage = "Please select a valid product.";
-                return;
-            }
 
             var option = ProductOptions?.FirstOrDefault(
-                p => p.Value == SelectedProductUuid);
+                p => p.Value == SelectedProductUuid.ToString());
 
             if (option == null)
             {
@@ -129,7 +124,7 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
                 return;
             }
 
-            if (SelectedProducts.Any(p => p.ProductUuid == productUuid))
+            if (SelectedProducts.Any(p => p.ProductUuid == SelectedProductUuid))
             {
                 ErrorMessage = "This product has already been added.";
                 return;
@@ -137,12 +132,12 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
 
             SelectedProducts.Add(new SelectedWorkOrderProduct
             {
-                ProductUuid = productUuid,
+                ProductUuid = SelectedProductUuid,
                 ProductName = option.Text,
                 Quantity = 1
             });
 
-            SelectedProductUuid = string.Empty;
+            SelectedProductUuid = Guid.Empty;
             ErrorMessage = string.Empty;
         }
 

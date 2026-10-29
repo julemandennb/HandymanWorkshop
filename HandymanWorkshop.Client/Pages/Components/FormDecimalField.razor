@@ -6,19 +6,26 @@
 
     <div>
         <InputNumber TValue="decimal"
-                     class="form-input"
+                     class="form-control"
                      id="@Id"
                      name="@Id"
+                     @attributes="AdditionalAttributes"
                      Value="@Value"
                      ValueChanged="@ValueChanged"
                      ValueExpression="@ValueExpression"
-                     required="@Required" />
+                     required="@Required"
+                     min="@Min"
+                     max="@Max"
+                     step="@Step" />
 
         <ValidationMessage For="@ValueExpression" />
     </div>
 </div>
 
 @code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter]
     public string DivClass { get; set; } =
         "mb-3 d-flex flex-row justify-content-between align-items-start";
@@ -34,4 +41,8 @@
 
     [Parameter]
     public Expression<Func<decimal>>? ValueExpression { get; set; }
+
+    [Parameter] public decimal? Min { get; set; }
+    [Parameter] public decimal? Max { get; set; }
+    [Parameter] public decimal? Step { get; set; } = 1;
 }

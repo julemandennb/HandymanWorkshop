@@ -89,6 +89,7 @@ namespace HandymanWorkshop.Services
         {
             var employees = await _context.Employees
                .AsNoTracking()
+               .Include(d => d.Department)
                .FirstOrDefaultAsync(d => d.Uuid == uuid);
 
             return employees == null

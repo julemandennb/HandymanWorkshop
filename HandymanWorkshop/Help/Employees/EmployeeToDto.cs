@@ -17,7 +17,9 @@ namespace HandymanWorkshop.Help.Employees
                 Name = employee.Name,
                 Email = employee.Email,
                 HourlyRate = employee.HourlyRate,
-                Department = null,
+                Department = employee.Department != null
+                    ? DepartmentToDto.ToDto(employee.Department)
+                    : null,
                 WorkOrders = null
             };
         }

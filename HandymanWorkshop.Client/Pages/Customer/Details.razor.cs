@@ -19,7 +19,12 @@ namespace HandymanWorkshop.Client.Pages.Customer
 
         protected async override Task OnInitializedAsync()
         {
-            customer = await Http.GetFromJsonAsync<CustomerDto>("api/Customers/" + id);
+            try
+            {
+                customer = await Http.GetFromJsonAsync<CustomerDto>("api/Customers/" + id);
+            }
+            catch
+            { }
         }
     }
 }

@@ -171,6 +171,8 @@ namespace HandymanWorkshop.Services
         {
             var workOrder = await _context.WorkOrders
                .AsNoTracking()
+                .Include(w => w.Customer)
+                .Include(w => w.Employee)
                .FirstOrDefaultAsync(d => d.Uuid == uuid);
 
             return workOrder == null

@@ -15,9 +15,19 @@ namespace HandymanWorkshop.Client.Pages.Customer
         [Inject]
         protected NavigationManager? NavMan { get; set; }
 
+        protected bool show { get; set; } = false;
+
         protected async override Task OnInitializedAsync()
         {
-            customer = await Http.GetFromJsonAsync<CustomerDto>("api/Customers/" + id);
+            try
+            {
+                customer = await Http.GetFromJsonAsync<CustomerDto>("api/Customers/" + id);
+                show = true;
+            }
+            catch
+            {
+
+            }
         }
 
         protected async Task DeleteCustomer()

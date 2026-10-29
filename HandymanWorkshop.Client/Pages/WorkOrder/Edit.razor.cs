@@ -28,7 +28,7 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
 
         private List<EditableWorkOrderProduct> SelectedProducts { get; set; } = new();
 
-        private string SelectedProductUuid { get; set; } = string.Empty;
+        private Guid SelectedProductUuid { get; set; } = Guid.Empty;
 
         private bool isLoading = true;
         private bool isLoadingProducts;
@@ -120,20 +120,14 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
         {
             ErrorMessage = string.Empty;
 
-            if (!Guid.TryParse(SelectedProductUuid, out var productUuid))
-            {
-                ErrorMessage = "Please select a valid product.";
-                return;
-            }
-
-            if (SelectedProducts.Any(p => p.ProductUuid == productUuid))
+            if (SelectedProducts.Any(p => p.ProductUuid == SelectedProductUuid))
             {
                 ErrorMessage = "This product has already been added.";
                 return;
             }
 
             var option = ProductOptions.FirstOrDefault(
-                p => p.Value == SelectedProductUuid);
+                p => p.Value == SelectedProductUuid.ToString());
 
             if (option == null)
             {
@@ -146,7 +140,7 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
                 // This assumes GET api/Products/{uuid} returns a ProductDto
                 // with a Price property. Adjust if your endpoint differs.
                 var product = await Http.GetFromJsonAsync<ProductDto>(
-                    $"api/Products/{productUuid}");
+                    $"api/Products/{SelectedProductUuid}");
 
                 if (product == null)
                 {
@@ -156,13 +150,13 @@ namespace HandymanWorkshop.Client.Pages.WorkOrder
 
                 SelectedProducts.Add(new EditableWorkOrderProduct
                 {
-                    ProductUuid = productUuid,
+                    ProductUuid = SelectedProductUuid,
                     ProductName = option.Text,
                     Quantity = 1,
                     UnitPrice = product.Price
                 });
 
-                SelectedProductUuid = string.Empty;
+                SelectedProductUuid = Guid.Empty;
             }
             catch (Exception ex)
             {

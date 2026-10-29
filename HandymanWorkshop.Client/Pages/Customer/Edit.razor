@@ -8,49 +8,52 @@
 <AuthorizeView Roles="Admin,SuperUser,Customer">
     <Authorized Context="authContext">
 
-        <div class="container mb-5">
-            <h3>Edit</h3>
+        @if (show)
+        {
 
-            <EditForm Model="@customer" OnValidSubmit="@EditCustomer">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+            <div class="container mb-5">
+                <h3>Edit</h3>
 
-                <div class="w-35">
-                    <FormTextField Id="name"
-                                   Label="Name"
-                                   @bind-Value="customer.Name"
-                                   Required="true" />
+                <EditForm Model="@customer" OnValidSubmit="@EditCustomer">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-                    <FormTextField Id="email"
-                                   Label="Email"
-                                   @bind-Value="customer.Email"
-                                   Required="true" />
+                    <div class="w-35">
+                        <FormTextField Id="name"
+                        Label="Name"
+                        @bind-Value="customer.Name"
+                        Required="true" />
 
-                    <FormTextField Id="phonenumber"
-                                   Label="PhoneNumber"
-                                   @bind-Value="customer.PhoneNumber"
-                                   Required="true" />
+                        <FormTextField Id="email"
+                        Label="Email"
+                        @bind-Value="customer.Email"
+                        Required="true" />
 
-                    <FormTextField Id="address"
-                                   Label="Address"
-                                   @bind-Value="customer.Address"
-                                   Required="true" />
+                        <FormTextField Id="phonenumber"
+                        Label="PhoneNumber"
+                        @bind-Value="customer.PhoneNumber"
+                        Required="true" />
 
-                    <FormTextField Id="postcode"
-                                   Label="Postcode"
-                                   @bind-Value="customer.Postcode"
-                                   Required="true" />
-                </div>
-              
+                        <FormTextField Id="address"
+                        Label="Address"
+                        @bind-Value="customer.Address"
+                        Required="true" />
 
-                <button type="submit" class="btn btn-primary">Edit</button>
-            </EditForm>
-            <br />
-            <br />
-            <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/Customer")'>Cancel</button>
-            <br />
-        </div>
+                        <FormTextField Id="postcode"
+                        Label="Postcode"
+                        @bind-Value="customer.Postcode"
+                        Required="true" />
+                    </div>
 
+
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                </EditForm>
+                <br />
+                <br />
+                <button type="button" class="btn btn-secondary" @onclick='() => NavMan.NavigateTo("/Customer")'>Cancel</button>
+                <br />
+            </div>
+        }
 
     </Authorized>
 </AuthorizeView>
