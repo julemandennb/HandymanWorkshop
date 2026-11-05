@@ -142,20 +142,26 @@ namespace HandymanWorkshop.Data
 
         public override int SaveChanges()
         {
+            
             ApplySoftDelete();
+            ApplyUpdatedAt();
             return base.SaveChanges();
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
+           
             ApplySoftDelete();
+            ApplyUpdatedAt();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override Task<int> SaveChangesAsync(
             CancellationToken cancellationToken = default)
         {
+            
             ApplySoftDelete();
+            ApplyUpdatedAt();
             return base.SaveChangesAsync(cancellationToken);
         }
 
@@ -163,7 +169,9 @@ namespace HandymanWorkshop.Data
             bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
+           
             ApplySoftDelete();
+            ApplyUpdatedAt();
             return base.SaveChangesAsync(
                 acceptAllChangesOnSuccess,
                 cancellationToken);
@@ -228,6 +236,22 @@ namespace HandymanWorkshop.Data
                 entry.Entity.DeletedAt = now;
                 entry.Entity.LockoutEnabled = true;
                 entry.Entity.LockoutEnd = DateTimeOffset.MaxValue;
+            }
+        }
+
+        private void ApplyUpdatedAt()
+        {
+            var now = DateTime.UtcNow;
+            foreach (var entry in ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Modified))
+            {
+                var updatedAtProperty = entry.Properties
+                .FirstOrDefault(p => p.Metadata.Name == "UpdatedAt");
+
+                if (updatedAtProperty != null)
+                {
+                    updatedAtProperty.CurrentValue = now;
+                }
             }
         }
     }

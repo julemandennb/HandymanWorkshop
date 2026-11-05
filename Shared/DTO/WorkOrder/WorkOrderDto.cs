@@ -3,6 +3,7 @@ using Shared.DTO.Departments;
 using Shared.DTO.Employee;
 using Shared.DTO.Pivot;
 using Shared.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace Shared.DTO.WorkOrder
 {
@@ -12,6 +13,8 @@ namespace Shared.DTO.WorkOrder
 
         public DateTime? UpdatedAt { get; set; }
 
+        [Required]
+        [StringLength(150)]
         public string Title { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
